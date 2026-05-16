@@ -18,24 +18,16 @@
   --error: #f56565;
   --error-bg: #fff5f5;
   --gold: #ecc94b;
-  --gold-bg: #fffff0;
   --border: #e2e8f0;
-  --danger: #e53e3e;
   --radius: 12px;
   --shadow: 0 2px 8px rgba(0,0,0,.08);
   --tap: min(48px, 12vw);
-  --rank-s: #f59e0b;
-  --rank-a: #3b82f6;
-  --rank-b: #10b981;
-  --rank-c: #8b5cf6;
-  --rank-d: #6b7280;
 }
 .dark {
   --bg: #0f172a;
   --card: #1e293b;
   --text: #e2e8f0;
   --muted: #94a3b8;
-  --muted-bg: #334155;
   --primary: #818cf8;
   --primary-light: #1e1b4b;
   --success: #34d399;
@@ -45,13 +37,7 @@
   --gold: #fbbf24;
   --gold-bg: #451a03;
   --border: #334155;
-  --danger: #ef4444;
   --shadow: 0 2px 8px rgba(0,0,0,.3);
-  --rank-s: #f59e0b;
-  --rank-a: #60a5fa;
-  --rank-b: #34d399;
-  --rank-c: #a78bfa;
-  --rank-d: #6b7280;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -70,19 +56,9 @@ header {
   padding: 8px 0 12px; flex-wrap: wrap; gap: 8px;
 }
 header h1 { font-size: 1.5rem; display: flex; align-items: center; gap: 8px; }
-.header-right { display: flex; align-items: center; gap: 8px; }
-.dark-toggle {
-  background: var(--muted-bg); border: 1px solid var(--border); border-radius: 999px;
-  width: 40px; height: 24px; cursor: pointer; position: relative; transition: background .2s; flex-shrink: 0;
-}
-.dark-toggle .knob {
-  position: absolute; top: 2px; left: 2px; width: 18px; height: 18px;
-  border-radius: 50%; background: var(--gold); transition: transform .2s, background .2s;
-}
-.dark .dark-toggle .knob { transform: translateX(16px); background: #818cf8; }
 .score-badge {
   background: var(--primary); color: #fff; border-radius: 999px;
-  padding: 4px 16px; font-size: .85rem; font-weight: 600; white-space: nowrap;
+  padding: 4px 16px; font-size: .85rem; font-weight: 600;
 }
 .module-grid {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -96,15 +72,14 @@ header h1 { font-size: 1.5rem; display: flex; align-items: center; gap: 8px; }
 }
 .module-btn:active { transform: scale(.97); }
 .module-btn.active { border-color: var(--primary); background: var(--primary-light); }
-.module-btn.locked { opacity: .5; cursor: not-allowed; }
+.module-btn.locked { opacity: .55; cursor: not-allowed; }
 .module-btn.locked:active { transform: none; }
+.module-btn.locked::after { content: '...'; position: absolute; top: 4px; right: 8px; font-size: .8rem; }
 .module-btn .num { display: block; font-size: 1.2rem; font-weight: 700; color: var(--primary); }
 .module-btn .label { display: block; margin-top: 2px; font-weight: 500; font-size: .8rem; }
 .module-btn .pct { display: block; font-size: .7rem; color: var(--muted); margin-top: 4px; }
-.module-btn .rank { font-size: .7rem; font-weight: 700; margin-top: 2px; }
-.module-btn .pct-bar { height: 6px; background: var(--border); border-radius: 3px; margin-top: 4px; overflow: hidden; }
-.module-btn .pct-bar span { display: block; height: 100%; border-radius: 3px; transition: width .3s, background .3s; }
-.module-btn .count { font-size: .65rem; color: var(--muted); margin-top: 2px; }
+.module-btn .pct-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 4px; overflow: hidden; }
+.module-btn .pct-bar span { display: block; height: 100%; background: var(--success); border-radius: 2px; transition: width .3s; }
 .topic-bar {
   display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 12px;
   -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity;
@@ -114,13 +89,13 @@ header h1 { font-size: 1.5rem; display: flex; align-items: center; gap: 8px; }
   border-radius: 999px; padding: 6px 18px; font-size: .8rem; cursor: pointer;
   transition: all .1s; white-space: nowrap; scroll-snap-align: start;
 }
-.topic-btn.active { border-color: var(--gold); background: var(--gold-bg); font-weight: 600; }
+.topic-btn.active { border-color: var(--gold); background: #fffff0; font-weight: 600; }
 .topic-btn.mastered { border-color: var(--success); }
-.topic-btn .pct-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-left: 6px; }
+.topic-btn.mastered::after { content: ' ...'; color: var(--success); }
 .topic-btn:active { transform: scale(.96); }
 .problem-card {
   background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
-  padding: 24px 20px; margin: 8px 0; transition: background .2s;
+  padding: 24px 20px; margin: 8px 0;
 }
 .problem-text {
   font-size: 1.6rem; text-align: center; padding: 20px 0 8px;
@@ -128,6 +103,7 @@ header h1 { font-size: 1.5rem; display: flex; align-items: center; gap: 8px; }
   display: flex; align-items: center; justify-content: center;
   flex-wrap: wrap; gap: 4px;
 }
+.problem-text .expr { font-family: 'Times New Roman', Times, serif; }
 .answer-row {
   display: flex; gap: 10px; align-items: center; justify-content: center;
   flex-wrap: wrap; margin: 8px 0;
@@ -137,7 +113,9 @@ header h1 { font-size: 1.5rem; display: flex; align-items: center; gap: 8px; }
   font-size: 1.3rem; padding: 10px 16px; border: 2px solid var(--border);
   border-radius: 10px; width: min(180px, 50vw); text-align: center;
   font-family: inherit; outline: none; transition: border-color .15s;
-  -moz-appearance: textfield; background: var(--bg); color: var(--text);
+  -moz-appearance: textfield;
+  background: var(--bg);
+  color: var(--text);
 }
 .answer-row input:focus { border-color: var(--primary); }
 .answer-row input::-webkit-outer-spin-button,
@@ -162,49 +140,25 @@ header h1 { font-size: 1.5rem; display: flex; align-items: center; gap: 8px; }
 .feedback.correct { background: var(--success-bg); border: 1.5px solid var(--success); }
 .feedback.wrong { background: var(--error-bg); border: 1.5px solid var(--error); }
 .feedback .solution { font-weight: 700; margin-top: 4px; color: var(--primary); }
-.feedback .roll-info { font-size: .8rem; color: var(--muted); margin-top: 4px; }
-.feedback .death { font-size: 1.1rem; font-weight: 700; color: var(--danger); margin-bottom: 4px; }
 .stats-bar {
   display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
   padding: 8px 0; font-size: .85rem; color: var(--muted);
 }
 .stats-bar span { display: flex; align-items: center; gap: 4px; }
-.stats-bar .roll { font-weight: 600; }
-.module-placeholder { text-align: center; padding: 40px 20px; color: var(--muted); }
-.module-placeholder h2 { font-size: 1.3rem; margin-bottom: 8px; color: var(--text); }
+.reset-area { text-align: center; margin: 24px 0; }
+.reset-area button { color: var(--error); }
 .toast {
   position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
   background: var(--primary); color: #fff; padding: 14px 28px;
   border-radius: var(--radius); font-weight: 600; box-shadow: 0 4px 20px rgba(0,0,0,.2);
   z-index: 100; opacity: 0; transition: opacity .3s, transform .3s;
   pointer-events: none; transform: translateX(-50%) translateY(20px);
-  text-align: center; max-width: 90vw; font-size: .9rem;
+  text-align: center; max-width: 90vw;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 .toast .sub { font-weight: 400; font-size: .85rem; margin-top: 4px; opacity: .9; }
-.toast.death { background: var(--danger); }
-
-/* Death animation */
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  20%, 60% { transform: translateX(-8px); }
-  40%, 80% { transform: translateX(8px); }
-}
-.shake { animation: shake .4s ease-in-out; }
-@keyframes flash-red {
-  0% { background: var(--error-bg); }
-  100% { background: var(--error-bg); }
-}
-.flash-death { animation: flash-red .6s ease-in-out 3; border-color: var(--danger) !important; }
-
-/* Progress toward 100 */
-.progress-100 {
-  display: flex; align-items: center; gap: 8px; justify-content: center;
-  padding: 4px 0; font-size: .75rem; color: var(--muted);
-}
-.progress-100 .bar { flex: 1; max-width: 200px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
-.progress-100 .bar span { display: block; height: 100%; border-radius: 2px; transition: width .3s; }
-
+.module-placeholder { text-align: center; padding: 40px 20px; color: var(--muted); }
+.module-placeholder h2 { font-size: 1.3rem; margin-bottom: 8px; color: var(--text); }
 @media (max-width: 500px) {
   .app { padding: 8px 10px 80px; }
   header h1 { font-size: 1.2rem; }
@@ -220,18 +174,16 @@ header h1 { font-size: 1.5rem; display: flex; align-items: center; gap: 8px; }
 <div class="app" id="app">
   <header>
     <h1> Math Coach</h1>
-    <div class="header-right">
-      <div class="dark-toggle" id="darkToggle" title="Toggle dark mode">
-        <div class="knob"></div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div id="darkToggle" style="background:var(--muted-bg);border:1px solid var(--border);border-radius:999px;width:40px;height:24px;cursor:pointer;position:relative;flex-shrink:0;">
+        <div style="position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:var(--gold);transition:transform .2s,background .2s;" id="darkKnob"></div>
       </div>
-      <a href="http://100.90.189.107:8083/sparrow-flash/" style="font-size:0.7rem;color:var(--muted);text-decoration:none;background:var(--muted-bg);padding:2px 8px;border-radius:999px;font-weight:500;">⚡</a>
+      <a href="http://100.90.189.107:8083/sparrow-flash/" style="font-size:0.7rem;color:#64748b;text-decoration:none;background:#f1f5f9;padding:2px 8px;border-radius:999px;font-weight:500;">⚡</a>
       <div class="score-badge" id="totalScore">0 XP</div>
     </div>
   </header>
-
   <div class="module-grid" id="moduleGrid"></div>
   <div class="topic-bar" id="topicBar"></div>
-
   <div class="problem-card" id="problemCard">
     <div class="problem-text" id="problemText">Pick a topic to start practicing!</div>
     <div class="answer-row" id="answerRow">
@@ -239,27 +191,21 @@ header h1 { font-size: 1.5rem; display: flex; align-items: center; gap: 8px; }
       <button class="btn btn-primary" id="submitBtn">Check</button>
       <button class="btn btn-ghost btn-sm" id="skipBtn">Skip</button>
     </div>
-    <div class="progress-100" id="progress100">
-      <span id="progressLabel">0/100</span>
-      <div class="bar"><span id="progressFill" style="width:0%"></span></div>
-    </div>
     <div class="feedback" id="feedback"></div>
     <div class="stats-bar" id="statsBar">
-      <span>🔥 <span id="streak">0</span> streak</span>
-      <span>📊 <span id="rollPct">--</span>% roll</span>
-      <span>✅ <span id="correctCount">0</span>/<span id="totalCount">0</span></span>
+      <span><span id="streak">0</span> streak</span>
+      <span><span id="correctCount">0</span>/<span id="totalCount">0</span></span>
     </div>
   </div>
-
   <div class="toast" id="toast"></div>
-  <div class="reset-area" style="text-align:center;margin:24px 0;">
-    <button class="btn btn-ghost btn-sm" id="resetBtn">Reset All Progress</button>
+  <div class="reset-area">
+    <button class="btn btn-ghost btn-sm" id="resetBtn">Reset Progress</button>
   </div>
 </div>
 
 <script>
 // ============================================================
-//  MODULES
+//  MODULES (Ch 1-8 only)
 // ============================================================
 const MODULES = [
   { id:1, name:'Integers',                  short:'Integers',    color:'#5a67d8', ch:'Ch 1' },
@@ -272,176 +218,305 @@ const MODULES = [
   { id:8, name:'Applying Equations & Ineqs',short:'Apply Eq',    color:'#e53e3e', ch:'Ch 8' },
 ];
 
-const REQ = 100;      // questions to master a module
-const WINDOW = 20;    // rolling window size
-const PASS = 80;      // minimum rolling %
-
 function rint(a,b) { return Math.floor(Math.random()*(b-a+1))+a; }
 function pick(a) { return a[Math.floor(Math.random()*a.length)]; }
 function gcf(x,y) { while(y){[x,y]=[y,x%y]} return x; }
+
 function m(parts) { return parts.join(''); }
-
-function rankStr(pct, mastered) {
-  if (!mastered) return '—';
-  if (pct >= 95) return 'S';
-  if (pct >= 90) return 'A';
-  if (pct >= 85) return 'B';
-  if (pct >= 80) return 'C';
-  return 'D';
-}
-function rankColor(r) {
-  if (r === 'S') return 'var(--rank-s)';
-  if (r === 'A') return 'var(--rank-a)';
-  if (r === 'B') return 'var(--rank-b)';
-  if (r === 'C') return 'var(--rank-c)';
-  return 'var(--rank-d)';
-}
+function tex(s) { return '\\('+s+'\\)'; }
+function frac(n,d) { return '\\frac{'+n+'}{'+d+'}'; }
 
 // ============================================================
-//  TOPIC GENERATORS (unchanged)
+//  TOPIC GENERATORS
 // ============================================================
-const T1 = [
-  { id:'t1-abs', name:'Absolute Value', gen(){ let n=rint(-99,99); return{q:m(['|',n,'| = ?']), a:String(Math.abs(n))}; }},
-  { id:'t1-add', name:'Adding Integers', gen(){ let a=rint(-50,50),b=rint(-50,50); return{q:m([a,' + ',b,' = ?']), a:String(a+b)}; }},
-  { id:'t1-sub', name:'Subtracting Integers', gen(){ let a=rint(-50,50),b=rint(-50,50); return{q:m([a,' - ',b,' = ?']), a:String(a-b)}; }},
-  { id:'t1-mul', name:'Multiplying Integers', gen(){ let a=rint(-12,12),b=rint(-12,12); return{q:m([a,' x ',b,' = ?']), a:String(a*b)}; }},
-  { id:'t1-div', name:'Dividing Integers', gen(){ let b=pick([1,2,3,4,5,6,8,10,12]), a=b*rint(-12,12); return{q:m([a,' / ',b,' = ?']), a:String(a/b)}; }},
-  { id:'t1-exp', name:'Exponents', gen(){ let b=rint(-5,5), e=rint(2,5); return{q:m([b,'^',e,' = ?']), a:String(Math.pow(b,e))}; }},
-  { id:'t1-oop', name:'Order of Operations', gen(){ let p=pick([ ()=>{let a=rint(1,20),b=rint(2,9),c=rint(1,10); return{q:m([a,' + ',b,' x ',c,' = ?']),a:String(a+b*c),h:'Multiply first'};}, ()=>{let a=rint(1,15),b=rint(1,15),c=rint(2,8); return{q:m(['(',a,'+',b,') x ',c,' = ?']),a:String((a+b)*c),h:'Parentheses first'};}, ()=>{let a=rint(10,40),b=rint(2,8),c=rint(1,10); return{q:m([a,' - ',b,' x ',c,' = ?']),a:String(a-b*c),h:'Multiply first'};}, ]); return p(); }},
-  { id:'t1-sci', name:'Scientific Notation', gen(){ let p=pick([ ()=>{let c=rint(1,9)+'.'+rint(1,9)+'0', e=rint(1,5); return{q:m([c,' x 10^',e,' = ? (as integer)']),a:String(Math.round(parseFloat(c)*Math.pow(10,e)))};}, ()=>{let v=pick([1200,34000,560000,7890,45000,78000000]); return{q:m(['Write ',v,' in scientific notation']),a:v+'E'+String(v).length-1};}, ]); return p(); }},
+const T1 = [ // Integers
+  { id:'t1-abs', name:'Absolute Value', gen(){
+    let n=rint(-99,99); return{q:m(['|',n,'| = ?']), a:String(Math.abs(n))}; }},
+  { id:'t1-add', name:'Adding Integers', gen(){
+    let a=rint(-50,50),b=rint(-50,50); return{q:m([a,' + ',b,' = ?']), a:String(a+b)}; }},
+  { id:'t1-sub', name:'Subtracting Integers', gen(){
+    let a=rint(-50,50),b=rint(-50,50); return{q:m([a,' - ',b,' = ?']), a:String(a-b)}; }},
+  { id:'t1-mul', name:'Multiplying Integers', gen(){
+    let a=rint(-12,12),b=rint(-12,12); return{q:m([a,' x ',b,' = ?']), a:String(a*b)}; }},
+  { id:'t1-div', name:'Dividing Integers', gen(){
+    let b=pick([1,2,3,4,5,6,8,10,12]), a=b*rint(-12,12); return{q:m([a,' / ',b,' = ?']), a:String(a/b)}; }},
+  { id:'t1-exp', name:'Exponents', gen(){
+    let b=rint(-5,5), e=rint(2,5); return{q:m([b,'^',e,' = ?']), a:String(Math.pow(b,e))}; }},
+  { id:'t1-oop', name:'Order of Operations', gen(){
+    let p=pick([
+      ()=>{let a=rint(1,20),b=rint(2,9),c=rint(1,10); return{q:m([a,' + ',b,' x ',c,' = ?']),a:String(a+b*c),h:'Multiply first'};},
+      ()=>{let a=rint(1,15),b=rint(1,15),c=rint(2,8); return{q:m(['(',a,'+',b,') x ',c,' = ?']),a:String((a+b)*c),h:'Parentheses first'};},
+      ()=>{let a=rint(10,40),b=rint(2,8),c=rint(1,10); return{q:m([a,' - ',b,' x ',c,' = ?']),a:String(a-b*c),h:'Multiply first'};},
+    ]); return p(); }},
+  { id:'t1-sci', name:'Scientific Notation', gen(){
+    let p=pick([
+      ()=>{let c=rint(1,9)+'.'+rint(1,9)+'0', e=rint(1,5); return{q:m([c,' x 10^',e,' = ? (as integer)']),a:String(Math.round(parseFloat(c)*Math.pow(10,e)))};},
+      ()=>{let v=pick([1200,34000,560000,7890,45000,78000000]); return{q:m(['Write ',v,' in scientific notation']),a:v+'E'+String(v).length-1};},
+    ]); return p(); }},
 ];
-const T2 = [
-  { id:'t2-distrib', name:'Distributive Property', gen(){ let a=rint(2,10),b=rint(1,15),c=rint(1,15); return{q:m(['Expand: ',a,'(',b,'+',c,') = ?']),a:String(a*b+a*c),h:m(['= ',a*b,' + ',a*c])}; }},
-  { id:'t2-eval', name:'Evaluate Expressions', gen(){ let x=rint(-5,10),a=rint(1,5),b=rint(-5,5); return{q:m(['If x = ',x,', evaluate ',a,'x ',b<0?'-':'+',' ',Math.abs(b)]),a:String(a*x+b)}; }},
-  { id:'t2-simplify', name:'Simplify Expressions', gen(){ let a=rint(2,6),b=rint(2,6),c=rint(1,10),d=rint(1,10); return{q:m(['Simplify: ',a,'x + ',c,' + ',b,'x - ',d,' = ?']),a:m([a+b,'x + ',c-d]),h:m(['(',a,'+',b,')x',c-d>=0?' + ':' - ',' ',Math.abs(c-d)])}; }},
-  { id:'t2-translate', name:'Translate Phrases', gen(){ let n=rint(1,15); return pick([{q:m(['Five more than ',n,' = ?']),a:String(n+5)},{q:m([n,' less than 20 = ?']),a:String(20-n)},{q:m([n,' times 4 = ?']),a:String(n*4)},{q:m([n,' divided by 2 = ?']),a:String(n/2)}]); }},
-  { id:'t2-props', name:'Properties', gen(){ let a=rint(2,9),b=rint(2,9),c=rint(2,9); return pick([{q:m([a,' + ',b,' = ',b,' + ',a,' — what property?']),a:'commutative'},{q:m(['(',a,'+',b,')+',c,' = ',a,'+(',b,'+',c,') — what property?']),a:'associative'},{q:m([a,'(',b,'+',c,') = ',a*b,'+',a*c,' — what property?']),a:'distributive'}]); }},
+
+const T2 = [ // Expressions
+  { id:'t2-distrib', name:'Distributive Property', gen(){
+    let a=rint(2,10),b=rint(1,15),c=rint(1,15); return{q:m(['Expand: ',a,'(',b,'+',c,') = ?']),a:String(a*b+a*c),h:m(['= ',a*b,' + ',a*c])}; }},
+  { id:'t2-eval', name:'Evaluate Expressions', gen(){
+    let x=rint(-5,10),a=rint(1,5),b=rint(-5,5); return{q:m(['If x = ',x,', evaluate ',a,'x ',b<0?'-':'+',' ',Math.abs(b)]),a:String(a*x+b)}; }},
+  { id:'t2-simplify', name:'Simplify Expressions', gen(){
+    let a=rint(2,6),b=rint(2,6),c=rint(1,10),d=rint(1,10); return{q:m(['Simplify: ',a,'x + ',c,' + ',b,'x - ',d,' = ?']),a:m([a+b,'x + ',c-d]),h:m(['(',a,'+',b,')x',c-d>=0?' + ':' - ',' ',Math.abs(c-d)])}; }},
+  { id:'t2-translate', name:'Translate Phrases', gen(){
+    let n=rint(1,15); return pick([
+      {q:m(['Five more than ',n,' = ?']),a:String(n+5)},
+      {q:m([n,' less than 20 = ?']),a:String(20-n)},
+      {q:m([n,' times 4 = ?']),a:String(n*4)},
+      {q:m([n,' divided by 2 = ?']),a:String(n/2)},
+    ]); }},
+  { id:'t2-props', name:'Properties', gen(){
+    let a=rint(2,9),b=rint(2,9),c=rint(2,9); return pick([
+      {q:m([a,' + ',b,' = ',b,' + ',a,' \u2014 what property?']),a:'commutative'},
+      {q:m(['(',a,'+',b,')+',c,' = ',a,'+(',b,'+',c,') \u2014 what property?']),a:'associative'},
+      {q:m([a,'(',b,'+',c,') = ',a*b,'+',a*c,' \u2014 what property?']),a:'distributive'},
+    ]); }},
 ];
-const T3 = [
-  { id:'t3-addsub', name:'Add/Subtract Equations', gen(){ let x=rint(-20,20),b=rint(-20,20); return{q:m(['x + ',b,' = ',x+b,'. Solve for x']),a:String(x)}; }},
-  { id:'t3-muldiv', name:'Multiply/Divide Equations', gen(){ let x=rint(-12,12),a=pick([2,3,4,5,6]); return{q:m([a,'x = ',a*x,'. Solve for x']),a:String(x)}; }},
-  { id:'t3-twostep', name:'Two-Step Equations', gen(){ let x=rint(-10,10),a=pick([2,3,4,5]),b=rint(-15,15); return{q:m([a,'x + ',b,' = ',a*x+b,'. Solve for x']),a:String(x)}; }},
-  { id:'t3-ineq', name:'Inequalities', gen(){ let x=rint(1,10),a=pick([2,3,4]); return{q:m(['Solve: ',a,'x < ',a*x+1,' (largest integer)']),a:String(x),h:m(['x < ',(a*x+1)/a])}; }},
+
+const T3 = [ // Basic Equations & Inequalities
+  { id:'t3-addsub', name:'Add/Subtract Equations', gen(){
+    let x=rint(-20,20),b=rint(-20,20); return{q:m(['x + ',b,' = ',x+b,'. Solve for x']),a:String(x)}; }},
+  { id:'t3-muldiv', name:'Multiply/Divide Equations', gen(){
+    let x=rint(-12,12),a=pick([2,3,4,5,6]); return{q:m([a,'x = ',a*x,'. Solve for x']),a:String(x)}; }},
+  { id:'t3-twostep', name:'Two-Step Equations', gen(){
+    let x=rint(-10,10),a=pick([2,3,4,5]),b=rint(-15,15); return{q:m([a,'x + ',b,' = ',a*x+b,'. Solve for x']),a:String(x)}; }},
+  { id:'t3-ineq', name:'Inequalities', gen(){
+    let x=rint(1,10),a=pick([2,3,4]); return{q:m(['Solve: ',a,'x < ',a*x+1,' (largest integer)']),a:String(x),h:m(['x < ',(a*x+1)/a])}; }},
 ];
-const T4 = [
-  { id:'t4-prime', name:'Prime/Composite', gen(){ let n=pick([2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,4,6,8,9,10,12,14,15,16,18,20,21,22,24,25,26,27,28,30,32,33,34,35,36,38,39,40,42,44,45,46,48,49,50]); let ip=[2,3,5,7,11,13,17,19,23,29,31,37,41,43,47].includes(n); return{q:m(['Is ',n,' prime or composite?']),a:ip?'prime':'composite'}; }},
-  { id:'t4-factor', name:'Prime Factorization', gen(){ let n=pick([12,18,24,30,36,40,45,48,50,54,60,72,84,90,96,100]); function fz(num){let f=[],d=2; while(num>1){while(num%d===0){f.push(d);num/=d}d++}return f;} return{q:m(['Prime factorization of ',n]),a:fz(n).join(' x ')}; }},
-  { id:'t4-gcf', name:'GCF', gen(){ let pairs=[[12,18],[24,36],[15,25],[16,24],[8,12],[30,45],[14,21],[20,28],[18,24],[10,15]]; let pi=pick(pairs); return{q:m(['GCF of ',pi[0],' and ',pi[1]]),a:String(gcf(pi[0],pi[1]))}; }},
-  { id:'t4-lcm', name:'LCM', gen(){ let pairs=[[3,4],[6,8],[4,5],[6,10],[9,12],[5,7],[8,12],[6,9],[10,15]]; let pi=pick(pairs); return{q:m(['LCM of ',pi[0],' and ',pi[1]]),a:String(pi[0]*pi[1]/gcf(pi[0],pi[1]))}; }},
-  { id:'t4-arith', name:'Arithmetic Sequences', gen(){ let a1=rint(1,10),d=pick([2,3,5,-2,-3]),n=pick([3,4,5,6]); let t=[]; for(let i=0;i<n;i++) t.push(a1+i*d); let qn=pick([1,2,3,4,5,6]); let v=a1+(qn-1)*d; return{q:m(['Sequence: ',t.join(', '),',... What is term ',qn,'?']),a:String(v)}; }},
-  { id:'t4-geom', name:'Geometric Sequences', gen(){ let a1=rint(1,5),r=pick([2,3]); let t=[],v=a1; for(let i=0;i<4;i++){t.push(v);v*=r} return{q:m(['Sequence: ',t.join(', '),',... Next term?']),a:String(t[3]*r)}; }},
-  { id:'t4-bases', name:'Bases', gen(){ return pick([{q:'Convert binary 1011 to decimal',a:'11'},{q:'Convert binary 1101 to decimal',a:'13'},{q:'Convert binary 10010 to decimal',a:'18'},{q:'Convert decimal 7 to binary',a:'111'},{q:'Convert decimal 12 to binary',a:'1100'},{q:'Convert decimal 15 to binary',a:'1111'},{q:'Convert binary 1010 to decimal',a:'10'},{q:'Convert binary 1111 to decimal',a:'15'}]); }},
+
+const T4 = [ // Number Theory
+  { id:'t4-prime', name:'Prime/Composite', gen(){
+    let n=pick([2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,4,6,8,9,10,12,14,15,16,18,20,21,22,24,25,26,27,28,30,32,33,34,35,36,38,39,40,42,44,45,46,48,49,50]);
+    let ip=[2,3,5,7,11,13,17,19,23,29,31,37,41,43,47].includes(n); return{q:m(['Is ',n,' prime or composite?']),a:ip?'prime':'composite'}; }},
+  { id:'t4-factor', name:'Prime Factorization', gen(){
+    let n=pick([12,18,24,30,36,40,45,48,50,54,60,72,84,90,96,100]);
+    function fz(num){let f=[],d=2; while(num>1){while(num%d===0){f.push(d);num/=d}d++}return f;}
+    return{q:m(['Prime factorization of ',n]),a:fz(n).join(' x ')}; }},
+  { id:'t4-gcf', name:'GCF', gen(){
+    let pairs=[[12,18],[24,36],[15,25],[16,24],[8,12],[30,45],[14,21],[20,28],[18,24],[10,15]];
+    let a,b;pairs[pick([...Array(pairs.length).keys()])]; // get pair
+    let pi=pick(pairs); a=pi[0];b=pi[1]; return{q:m(['GCF of ',a,' and ',b]),a:String(gcf(a,b))}; }},
+  { id:'t4-lcm', name:'LCM', gen(){
+    let pairs=[[3,4],[6,8],[4,5],[6,10],[9,12],[5,7],[8,12],[6,9],[10,15]];
+    let pi=pick(pairs), a=pi[0],b=pi[1]; return{q:m(['LCM of ',a,' and ',b]),a:String(a*b/gcf(a,b))}; }},
+  { id:'t4-arith', name:'Arithmetic Sequences', gen(){
+    let a1=rint(1,10),d=pick([2,3,5,-2,-3]),n=pick([3,4,5,6]);
+    let t=[]; for(let i=0;i<n;i++) t.push(a1+i*d);
+    let qn=pick([1,2,3,4,5,6]); let v=a1+(qn-1)*d;
+    return{q:m(['Sequence: ',t.join(', '),',... What is term ',qn,'?']),a:String(v)}; }},
+  { id:'t4-geom', name:'Geometric Sequences', gen(){
+    let a1=rint(1,5),r=pick([2,3]); let t=[],v=a1; for(let i=0;i<4;i++){t.push(v);v*=r}
+    return{q:m(['Sequence: ',t.join(', '),',... Next term?']),a:String(t[3]*r)}; }},
+  { id:'t4-bases', name:'Bases', gen(){
+    return pick([
+      {q:'Convert binary 1011 to decimal',a:'11'},
+      {q:'Convert binary 1101 to decimal',a:'13'},
+      {q:'Convert binary 10010 to decimal',a:'18'},
+      {q:'Convert decimal 7 to binary',a:'111'},
+      {q:'Convert decimal 12 to binary',a:'1100'},
+      {q:'Convert decimal 15 to binary',a:'1111'},
+      {q:'Convert binary 1010 to decimal',a:'10'},
+      {q:'Convert binary 1111 to decimal',a:'15'},
+    ]); }},
 ];
-const T5 = [
-  { id:'t5-forms', name:'Forms of Rational Numbers', gen(){ return pick([{q:'Write 0.75 as fraction',a:'3/4'},{q:'Write 0.5 as fraction',a:'1/2'},{q:'Write 0.2 as fraction',a:'1/5'},{q:'Write 0.125 as fraction',a:'1/8'},{q:'Write 0.375 as fraction',a:'3/8'},{q:'Write 3/5 as decimal',a:'0.6'},{q:'Write 7/8 as decimal',a:'0.875'},{q:'Write 4/5 as decimal',a:'0.8'}]); }},
-  { id:'t5-compare', name:'Comparing Rationals', gen(){ return pick([{q:'Which is larger: 3/5 or 1/2?',a:'3/5'},{q:'Which is larger: 7/8 or 3/4?',a:'7/8'},{q:'Which is larger: 2/5 or 2/5?',a:'equal'},{q:'Which is larger: 1/3 or 1/4?',a:'1/3'},{q:'Which is larger: 5/6 or 11/12?',a:'11/12'},{q:'Which is larger: 2/3 or 3/5?',a:'2/3'}]); }},
-  { id:'t5-decimal', name:'Decimal Equivalents', gen(){ return pick([{q:'1/8 as decimal',a:'0.125'},{q:'7/10 as decimal',a:'0.7'},{q:'3/5 as decimal',a:'0.6'},{q:'9/100 as decimal',a:'0.09'},{q:'45/100 as decimal',a:'0.45'},{q:'3/4 as decimal',a:'0.75'},{q:'1/3 as decimal (round to 3 places)',a:'0.333'}]); }},
-  { id:'t5-ratio', name:'Ratio and Rate', gen(){ let a=rint(2,8),b=rint(3,9),m=rint(2,5); return{q:m(['Recipe: ',a,' cups for ',b,' servings. Cups for ',b*m,' servings?']),a:String(a*m)}; }},
-  { id:'t5-proportion', name:'Proportions', gen(){ let p=pick([()=>{let a=rint(1,6),b=rint(2,8),x=rint(1,6); return{q:m([a,'/',b,' = ',x,'/?']),a:String(b*x/a)};},()=>{let a=rint(2,8),b=rint(1,5),x=rint(2,8); return{q:m([a,'/',x,' = ',b,'/10']),a:String(a*10/b)};}]); return p(); }},
-  { id:'t5-reals', name:'Real Numbers', gen(){ return pick([{q:'Is sqrt(25) rational? (yes/no)',a:'yes'},{q:'Is sqrt(7) rational? (yes/no)',a:'no'},{q:'Is 0.333... rational? (yes/no)',a:'yes'},{q:'Is pi rational? (yes/no)',a:'no'},{q:'Is -3 a real number? (yes/no)',a:'yes'},{q:'Is sqrt(2) rational? (yes/no)',a:'no'}]); }},
+
+const T5 = [ // Rational Numbers
+  { id:'t5-forms', name:'Forms of Rational Numbers', gen(){
+    return pick([
+      {q:'Write 0.75 as fraction',a:'3/4'},
+      {q:'Write 0.5 as fraction',a:'1/2'},
+      {q:'Write 0.2 as fraction',a:'1/5'},
+      {q:'Write 0.125 as fraction',a:'1/8'},
+      {q:'Write 0.375 as fraction',a:'3/8'},
+      {q:'Write 3/5 as decimal',a:'0.6'},
+      {q:'Write 7/8 as decimal',a:'0.875'},
+      {q:'Write 4/5 as decimal',a:'0.8'},
+    ]); }},
+  { id:'t5-compare', name:'Comparing Rationals', gen(){
+    return pick([
+      {q:'Which is larger: 3/5 or 1/2?',a:'3/5'},
+      {q:'Which is larger: 7/8 or 3/4?',a:'7/8'},
+      {q:'Which is larger: 2/5 or 2/5?',a:'equal'},
+      {q:'Which is larger: 1/3 or 1/4?',a:'1/3'},
+      {q:'Which is larger: 5/6 or 11/12?',a:'11/12'},
+      {q:'Which is larger: 2/3 or 3/5?',a:'2/3'},
+    ]); }},
+  { id:'t5-decimal', name:'Decimal Equivalents', gen(){
+    return pick([
+      {q:'1/8 as decimal',a:'0.125'},
+      {q:'7/10 as decimal',a:'0.7'},
+      {q:'3/5 as decimal',a:'0.6'},
+      {q:'9/100 as decimal',a:'0.09'},
+      {q:'45/100 as decimal',a:'0.45'},
+      {q:'3/4 as decimal',a:'0.75'},
+      {q:'1/3 as decimal (round to 3 places)',a:'0.333'},
+    ]); }},
+  { id:'t5-ratio', name:'Ratio and Rate', gen(){
+    let a=rint(2,8),b=rint(3,9),m=rint(2,5);
+    return{q:m(['Recipe: ',a,' cups for ',b,' servings. Cups for ',b*m,' servings?']),a:String(a*m)}; }},
+  { id:'t5-proportion', name:'Proportions', gen(){
+    let p=pick([
+      ()=>{let a=rint(1,6),b=rint(2,8),x=rint(1,6); return{q:m([a,'/',b,' = ',x,'/?']),a:String(b*x/a)};},
+      ()=>{let a=rint(2,8),b=rint(1,5),x=rint(2,8); return{q:m([a,'/',x,' = ',b,'/10']),a:String(a*10/b)};},
+    ]); return p(); }},
+  { id:'t5-reals', name:'Real Numbers', gen(){
+    return pick([
+      {q:'Is sqrt(25) rational? (yes/no)',a:'yes'},
+      {q:'Is sqrt(7) rational? (yes/no)',a:'no'},
+      {q:'Is 0.333... rational? (yes/no)',a:'yes'},
+      {q:'Is pi rational? (yes/no)',a:'no'},
+      {q:'Is -3 a real number? (yes/no)',a:'yes'},
+      {q:'Is sqrt(2) rational? (yes/no)',a:'no'},
+    ]); }},
 ];
-const T6 = [
-  { id:'t6-add', name:'Add/Subtract Fractions', gen(){ let d=pick([2,3,4,5,6,8,10,12]),a=rint(1,d-1),b=rint(1,d-1),op=pick(['+','-']); let num=op==='+'?a+b:Math.abs(a-b); if(num===0) return{q:m(['',a,'/',d,' - ',b,'/',d,' = ?']),a:'0'}; let gd=gcf(num,d),sn=num/gd,sd=d/gd,ans=sd===1?String(sn):sn+'/'+sd; let sym=op==='+'?' + ':' - '; return{q:m(['',a,'/',d,sym,b,'/',d,' = ?']),a:ans}; }},
-  { id:'t6-mul', name:'Multiply Fractions', gen(){ let a=rint(1,5),b=rint(1,6),c=rint(1,5),d=rint(1,6),num=a*c,den=b*d,gd=gcf(num,den); let ans=den/gd===1?String(num/gd):(num/gd)+'/'+(den/gd); return{q:m(['',a,'/',b,' x ',c,'/',d,' = ?']),a:ans}; }},
-  { id:'t6-div', name:'Divide Fractions', gen(){ let a=rint(1,5),b=rint(1,6),c=rint(1,5),d=rint(1,6),num=a*d,den=b*c,gd=gcf(num,den); let ans=den/gd===1?String(num/gd):(num/gd)+'/'+(den/gd); return{q:m(['',a,'/',b,' / ',c,'/',d,' = ?']),a:ans,h:'Multiply by the reciprocal'}; }},
-  { id:'t6-eval', name:'Evaluate Rational Expressions', gen(){ let x=pick([2,3,4,5,6,10]); let a=pick([1,2,3]); let num=2*a, den=x, gd=gcf(num,den); let ans=den/gd===1?String(num/gd):(num/gd)+'/'+(den/gd); return{q:m(['If x=',x,', evaluate ',a,'/',x,' + ',a,'/',x,' = ?']),a:ans}; }},
-  { id:'t6-solve', name:'Solve Rational Equations', gen(){ let x=pick([2,3,4,6]),a=pick([2,3,4]); return{q:m(['Solve: x/',a,' = ',x]),a:String(a*x)}; }},
-  { id:'t6-sci', name:'Scientific Notation Ops', gen(){ return pick([{q:'(2x10^3)(3x10^4) = ?x10^?',a:'6x10^7'},{q:'(4x10^5)(2x10^2) = ?x10^?',a:'8x10^7'},{q:'(6x10^8)/(2x10^3) = ?x10^?',a:'3x10^5'},{q:'(8x10^6)/(4x10^2) = ?x10^?',a:'2x10^4'}]); }},
+
+const T6 = [ // Rational Number Operations
+  { id:'t6-add', name:'Add/Subtract Fractions', gen(){
+    let d=pick([2,3,4,5,6,8,10,12]),a=rint(1,d-1),b=rint(1,d-1),op=pick(['+','-']);
+    let num=op==='+'?a+b:Math.abs(a-b);
+    if(num===0) return{q:m(['',a,'/',d,' - ',b,'/',d,' = ?']),a:'0'};
+    let gd=gcf(num,d),sn=num/gd,sd=d/gd,ans=sd===1?String(sn):sn+'/'+sd;
+    let sym=op==='+'?' + ':' - '; return{q:m(['',a,'/',d,sym,b,'/',d,' = ?']),a:ans}; }},
+  { id:'t6-mul', name:'Multiply Fractions', gen(){
+    let a=rint(1,5),b=rint(1,6),c=rint(1,5),d=rint(1,6),num=a*c,den=b*d,gd=gcf(num,den);
+    let ans=den/gd===1?String(num/gd):(num/gd)+'/'+(den/gd);
+    return{q:m(['',a,'/',b,' x ',c,'/',d,' = ?']),a:ans}; }},
+  { id:'t6-div', name:'Divide Fractions', gen(){
+    let a=rint(1,5),b=rint(1,6),c=rint(1,5),d=rint(1,6),num=a*d,den=b*c,gd=gcf(num,den);
+    let ans=den/gd===1?String(num/gd):(num/gd)+'/'+(den/gd);
+    return{q:m(['',a,'/',b,' / ',c,'/',d,' = ?']),a:ans,h:'Multiply by the reciprocal'}; }},
+  { id:'t6-eval', name:'Evaluate Rational Expressions', gen(){
+    let x=pick([2,3,4,5,6,10]); let a=pick([1,2,3]);
+    let num=2*a, den=x, gd=gcf(num,den);
+    let ans=den/gd===1?String(num/gd):(num/gd)+'/'+(den/gd);
+    return{q:m(['If x=',x,', evaluate ',a,'/',x,' + ',a,'/',x,' = ?']),a:ans}; }},
+  { id:'t6-solve', name:'Solve Rational Equations', gen(){
+    let x=pick([2,3,4,6]),a=pick([2,3,4]); return{q:m(['Solve: x/',a,' = ',x]),a:String(a*x)}; }},
+  { id:'t6-sci', name:'Scientific Notation Ops', gen(){
+    return pick([
+      {q:'(2x10^3)(3x10^4) = ?x10^?',a:'6x10^7'},
+      {q:'(4x10^5)(2x10^2) = ?x10^?',a:'8x10^7'},
+      {q:'(6x10^8)/(2x10^3) = ?x10^?',a:'3x10^5'},
+      {q:'(8x10^6)/(4x10^2) = ?x10^?',a:'2x10^4'},
+    ]); }},
 ];
-const T7 = [
-  { id:'t7-forms', name:'Forms of Percents', gen(){ return pick([{q:'0.75 as a percent',a:'75%'},{q:'0.08 as a percent',a:'8%'},{q:'1.25 as a percent',a:'125%'},{q:'78% as a decimal',a:'0.78'},{q:'5% as a decimal',a:'0.05'},{q:'150% as a decimal',a:'1.5'},{q:'2/5 as a percent',a:'40%'},{q:'3/4 as a percent',a:'75%'},{q:'1/8 as a percent',a:'12.5%'},{q:'7/10 as a percent',a:'70%'}]); }},
-  { id:'t7-equations', name:'Percent Equations', gen(){ return pick([{q:'What percent of 50 is 10?',a:'20%'},{q:'What percent of 80 is 20?',a:'25%'},{q:'What percent of 200 is 50?',a:'25%'},{q:'30% of what number is 15?',a:'50'},{q:'25% of what number is 10?',a:'40'},{q:'75% of what number is 15?',a:'20'},{q:'What is 40% of 60?',a:'24'}]); }},
-  { id:'t7-of', name:'Percent of a Number', gen(){ let p=pick([10,20,25,30,50,75,15,40,60]); let n=pick([40,60,80,100,120,200,50,300,150]); return{q:m(['What is ',p,'% of ',n,'?']),a:String(Math.round(n*p/100))}; }},
-  { id:'t7-discount', name:'Discount & Markup', gen(){ let pr=pick([20,50,80,100,120,200,40,60]),pct=pick([10,15,20,25,30,50]); let mode=pick(['discount','markup']), mult=mode==='discount'?(100-pct)/100:(100+pct)/100; return{q:m([mode==='discount'?'Discount':'Markup',' of ',pct,'% on $',pr,' = ?']),a:String(Math.round(pr*mult))}; }},
-  { id:'t7-tip', name:'Commissions & Tips', gen(){ let b=pick([25,40,60,80,100,150]),p=pick([10,15,18,20]); return{q:m([p,'% tip on $',b,' bill']),a:String(Math.round(b*p/100))}; }},
-  { id:'t7-interest', name:'Simple Interest', gen(){ let p=pick([100,200,500,1000,2000]),r=pick([2,3,4,5,6]),t=pick([1,2,3]); return{q:m(['Interest on $',p,' at ',r,'% for ',t,' yr(s)']),a:String(p*r*t/100)}; }},
-  { id:'t7-change', name:'Percent Change', gen(){ return pick([{q:'From 20 to 25: % increase?',a:'25%'},{q:'From 50 to 40: % decrease?',a:'20%'},{q:'From 80 to 100: % increase?',a:'25%'},{q:'From 30 to 24: % decrease?',a:'20%'},{q:'From 10 to 15: % increase?',a:'50%'},{q:'From 60 to 45: % decrease?',a:'25%'}]); }},
+
+const T7 = [ // Percents
+  { id:'t7-forms', name:'Forms of Percents', gen(){
+    return pick([
+      {q:'0.75 as a percent',a:'75%'},
+      {q:'0.08 as a percent',a:'8%'},
+      {q:'1.25 as a percent',a:'125%'},
+      {q:'78% as a decimal',a:'0.78'},
+      {q:'5% as a decimal',a:'0.05'},
+      {q:'150% as a decimal',a:'1.5'},
+      {q:'2/5 as a percent',a:'40%'},
+      {q:'3/4 as a percent',a:'75%'},
+      {q:'1/8 as a percent',a:'12.5%'},
+      {q:'7/10 as a percent',a:'70%'},
+    ]); }},
+  { id:'t7-equations', name:'Percent Equations', gen(){
+    return pick([
+      {q:'What percent of 50 is 10?',a:'20%'},
+      {q:'What percent of 80 is 20?',a:'25%'},
+      {q:'What percent of 200 is 50?',a:'25%'},
+      {q:'30% of what number is 15?',a:'50'},
+      {q:'25% of what number is 10?',a:'40'},
+      {q:'75% of what number is 15?',a:'20'},
+      {q:'What is 40% of 60?',a:'24'},
+    ]); }},
+  { id:'t7-of', name:'Percent of a Number', gen(){
+    let p=pick([10,20,25,30,50,75,15,40,60]); let n=pick([40,60,80,100,120,200,50,300,150]);
+    return{q:m(['What is ',p,'% of ',n,'?']),a:String(Math.round(n*p/100))}; }},
+  { id:'t7-discount', name:'Discount & Markup', gen(){
+    let pr=pick([20,50,80,100,120,200,40,60]),pct=pick([10,15,20,25,30,50]);
+    let mode=pick(['discount','markup']), mult=mode==='discount'?(100-pct)/100:(100+pct)/100;
+    return{q:m([mode==='discount'?'Discount':'Markup',' of ',pct,'% on $',pr,' = ?']),a:String(Math.round(pr*mult))}; }},
+  { id:'t7-tip', name:'Commissions & Tips', gen(){
+    let b=pick([25,40,60,80,100,150]),p=pick([10,15,18,20]);
+    return{q:m([p,'% tip on $',b,' bill']),a:String(Math.round(b*p/100))}; }},
+  { id:'t7-interest', name:'Simple Interest', gen(){
+    let p=pick([100,200,500,1000,2000]),r=pick([2,3,4,5,6]),t=pick([1,2,3]);
+    return{q:m(['Interest on $',p,' at ',r,'% for ',t,' yr(s)']),a:String(p*r*t/100)}; }},
+  { id:'t7-change', name:'Percent Change', gen(){
+    return pick([
+      {q:'From 20 to 25: % increase?',a:'25%'},
+      {q:'From 50 to 40: % decrease?',a:'20%'},
+      {q:'From 80 to 100: % increase?',a:'25%'},
+      {q:'From 30 to 24: % decrease?',a:'20%'},
+      {q:'From 10 to 15: % increase?',a:'50%'},
+      {q:'From 60 to 45: % decrease?',a:'25%'},
+    ]); }},
 ];
-const T8 = [
-  { id:'t8-simplify', name:'Simplifying Equations', gen(){ let x=rint(1,8),a=rint(2,5),b=rint(1,10),c=rint(1,8); return{q:m(['Solve: ',a,'x + ',b,' + ',c,'x = ',a*x+b+c*x]),a:String(x)}; }},
-  { id:'t8-varboth', name:'Variables Both Sides', gen(){ let a=rint(2,4),c=rint(1,4); if(a===c){c=Math.max(1,a-1);} let x=rint(1,6),b=rint(1,8),d=a*x+b-c*x; if(d<1||d>20){d=b+1;b=d-a*x+c*x;if(b<1)b=1;d=a*x+b-c*x;} return{q:m(['Solve: ',a,'x + ',b,' = ',c,'x + ',d]),a:String(x)}; }},
-  { id:'t8-apply-eq', name:'Applying Equations', gen(){ let p=pick([()=>{let a=rint(2,5),x=rint(2,6); return{q:m([a,' books cost $',a*x,'. Each costs?']),a:String(x)};},()=>{let pr=pick([10,12,15,20,25]),h=rint(2,8); return{q:m(['Paid $',pr*h,' for ',h,'h. Hourly rate?']),a:String(pr)};},()=>{let s=rint(10,50),a=pick([2,3,5,10]),d=rint(3,7); return{q:m(['Start $',s,', save $',a,'/day. Total after ',d,' days?']),a:String(s+a*d)};}]); return p(); }},
-  { id:'t8-solve-ineq', name:'Solving Inequalities', gen(){ let x=rint(2,8),a=pick([2,3,4]),rhs=a*x,p=pick(['<','>']); let val=p==='<'?x:x+1; return{q:m(['Solve: ',a,'x ',p,' ',p==='<'?a*x+1:a*x-1,' (largest integer)']),a:String(val),h:m(['Divide both sides by ',a])}; }},
-  { id:'t8-apply-ineq', name:'Applying Inequalities', gen(){ return pick([{q:'Need $50. Have $20, earn $10/h. Min hours?',a:'3',h:'20+10h >= 50'},{q:'Drive <= 300 mi at 60 mph. Max hours?',a:'5',h:'60h <= 300'},{q:'50 cupcakes, pack 8/box. Min boxes?',a:'7',h:'8b >= 50'},{q:'Budget $100. Spent $15, need $5/plant. Max plants?',a:'17',h:'15+5p <= 100'},{q:'Earn $8/h, want >= $100. Hours?',a:'13',h:'8h >= 100'},{q:'Room holds 40, 12 already here. 3/car. Max cars?',a:'9',h:'12+3c <= 40'}]); }},
+
+const T8 = [ // Applying Equations & Inequalities
+  { id:'t8-simplify', name:'Simplifying Equations', gen(){
+    let x=rint(1,8),a=rint(2,5),b=rint(1,10),c=rint(1,8);
+    return{q:m(['Solve: ',a,'x + ',b,' + ',c,'x = ',a*x+b+c*x]),a:String(x)}; }},
+  { id:'t8-varboth', name:'Variables Both Sides', gen(){
+    let a=rint(2,4),c=rint(1,4); if(a===c){c=Math.max(1,a-1);}
+    let x=rint(1,6),b=rint(1,8),d=a*x+b-c*x;
+    if(d<1||d>20){d=b+1;b=d-a*x+c*x;if(b<1)b=1;d=a*x+b-c*x;}
+    return{q:m(['Solve: ',a,'x + ',b,' = ',c,'x + ',d]),a:String(x)}; }},
+  { id:'t8-apply-eq', name:'Applying Equations', gen(){
+    let p=pick([
+      ()=>{let a=rint(2,5),x=rint(2,6); return{q:m([a,' books cost $',a*x,'. Each costs?']),a:String(x)};},
+      ()=>{let pr=pick([10,12,15,20,25]),h=rint(2,8); return{q:m(['Paid $',pr*h,' for ',h,'h. Hourly rate?']),a:String(pr)};},
+      ()=>{let s=rint(10,50),a=pick([2,3,5,10]),d=rint(3,7); return{q:m(['Start $',s,', save $',a,'/day. Total after ',d,' days?']),a:String(s+a*d)};},
+    ]); return p(); }},
+  { id:'t8-solve-ineq', name:'Solving Inequalities', gen(){
+    let x=rint(2,8),a=pick([2,3,4]),rhs=a*x,p=pick(['<','>']);
+    let val=p==='<'?x:x+1;
+    return{q:m(['Solve: ',a,'x ',p,' ',p==='<'?a*x+1:a*x-1,' (largest integer)']),a:String(val),h:m(['Divide both sides by ',a])}; }},
+  { id:'t8-apply-ineq', name:'Applying Inequalities', gen(){
+    return pick([
+      {q:'Need $50. Have $20, earn $10/h. Min hours?',a:'3',h:'20+10h >= 50'},
+      {q:'Drive <= 300 mi at 60 mph. Max hours?',a:'5',h:'60h <= 300'},
+      {q:'50 cupcakes, pack 8/box. Min boxes?',a:'7',h:'8b >= 50'},
+      {q:'Budget $100. Spent $15, need $5/plant. Max plants?',a:'17',h:'15+5p <= 100'},
+      {q:'Earn $8/h, want >= $100. Hours?',a:'13',h:'8h >= 100'},
+      {q:'Room holds 40, 12 already here. 3/car. Max cars?',a:'9',h:'12+3c <= 40'},
+    ]); }},
 ];
+
 const ALL_TOPICS = {1:T1,2:T2,3:T3,4:T4,5:T5,6:T6,7:T7,8:T8};
 
 // ============================================================
-//  STATE
+//  STATE & PERSISTENCE
 // ============================================================
-const KEY = 'mc2_progress';
-const DARK_KEY = 'mc2_dark';
-
-function defState() {
-  let m={};
-  for(let i=1;i<=8;i++) m[i]={correct:0,total:0,recent:[],mastered:false,topics:{}};
-  return {xp:0,streak:0,bestStreak:0,modules:m,unlocked:[1],lastMod:1,lastTopic:null};
-}
+const KEY = 'mc_progress';
+function defState(){return{xp:0,mastery:{},unlocked:[1],lastMod:1,lastTopic:null};}
 let state = (()=>{try{let r=localStorage.getItem(KEY);return r?JSON.parse(r):defState();}catch(e){return defState();}})();
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
 
-// Dark mode
-let darkMode = (()=>{try{return localStorage.getItem(DARK_KEY)==='true';}catch(e){return false;}})();
-function applyDark() {
-  document.documentElement.classList.toggle('dark', darkMode);
-  try{localStorage.setItem(DARK_KEY, darkMode);}catch(e){}
-}
-applyDark();
-
-function getMod(mId) {
-  if(!state.modules[mId]) state.modules[mId]={correct:0,total:0,recent:[],mastered:false,topics:{}};
-  return state.modules[mId];
-}
-function rolling(mId) {
-  let mod=getMod(mId);
-  if(mod.recent.length===0) return 100;
-  return Math.round((mod.recent.filter(Boolean).length/mod.recent.length)*100);
-}
 function modPct(mId){
-  let m=getMod(mId); if(!m.total) return 0;
+  let m=state.mastery[mId]; if(!m||!m.total) return 0;
   return Math.round((m.correct/m.total)*100);
 }
 function topicPct(mId,tId){
-  let m=getMod(mId);
-  if(!m.topics[tId]) return 0;
+  let m=state.mastery[mId]; if(!m||!m.topics||!m.topics[tId]) return 0;
   let t=m.topics[tId]; return t.total?Math.round((t.correct/t.total)*100):0;
 }
-
 function mark(mId,tId,correct){
-  let mod=getMod(mId);
-  if(!mod.topics[tId]) mod.topics[tId]={correct:0,total:0};
-  let t=mod.topics[tId];
-  mod.total++; t.total++;
-  if(correct){ mod.correct++; t.correct++; state.xp=(state.xp||0)+10; }
-
-  // Rolling window
-  mod.recent.push(correct);
-  if(mod.recent.length>WINDOW) mod.recent.shift();
-
-  // Check death: rolling < 80% after 20+ questions
-  let roll=rolling(mId);
-  if(!correct && mod.total>=WINDOW && roll<PASS) {
-    // Die — reset this module
-    let wasMastered=mod.mastered;
-    mod.correct=0; mod.total=0; mod.recent=[]; mod.mastered=false; mod.topics={};
-    state.streak=0;
-    save();
-    return 'death'; // signal death
-  }
-
-  // Check mastery: 100+ questions AND rolling >= 80%
-  if(mod.total>=REQ && roll>=PASS && !mod.mastered) {
-    mod.mastered=true;
-    let next=mId+1;
-    if(next<=8&&!state.unlocked.includes(next)){
-      state.unlocked.push(next); state.unlocked.sort((a,b)=>a-b);
-      save();
-      return 'unlock';
-    }
-  }
-
+  if(!state.mastery[mId]) state.mastery[mId]={correct:0,total:0,topics:{}};
+  let m=state.mastery[mId];
+  if(!m.topics[tId]) m.topics[tId]={correct:0,total:0};
+  let t=m.topics[tId];
+  m.total++; t.total++;
+  if(correct){m.correct++; t.correct++; state.xp=(state.xp||0)+10;
+    // Check module unlock
+    let topics=ALL_TOPICS[mId];
+    if(topics&&topics.every(tx=>topicPct(mId,tx.id)>=80)){
+      let next=mId+1;
+      if(next<=8&&!state.unlocked.includes(next)){
+        state.unlocked.push(next); state.unlocked.sort((a,b)=>a-b);
+        showToast('Module '+next+' Unlocked!',MODULES.find(mx=>mx.id===next).name);
+  }}}
   save();
-  return 'ok';
 }
 
 // ============================================================
@@ -452,22 +527,12 @@ let curMod=state.lastMod||1, curTopic=null, curProb=null, streak=0;
 function renderModules(){
   let g=document.getElementById('moduleGrid');
   g.innerHTML=MODULES.map(m=>{
-    let mod=getMod(m.id);
-    let pct=modPct(m.id), roll=rolling(m.id);
-    let locked=!state.unlocked.includes(m.id), act=m.id===curMod?'active':'';
-    let r=rankStr(pct,mod.mastered);
-    let rcol=r!=='—'?'color:'+rankColor(r):'';
-    let pctDone=Math.min(mod.total,REQ);
-    let barW=(pctDone/REQ*100);
-    let barColor=mod.mastered?'var(--success)':roll>=80?'var(--primary)':roll>0?'var(--gold)':'var(--border)';
-    let cnt=mod.total+'/'+REQ;
+    let pct=modPct(m.id), locked=!state.unlocked.includes(m.id), act=m.id===curMod?'active':'';
     return '<div class="module-btn '+(locked?'locked':'')+' '+act+'" data-m="'+m.id+'">'+
       '<span class="num">'+m.id+'</span>'+
       '<span class="label">'+m.short+'</span>'+
-      '<span class="pct">'+(locked?'--':roll+'%')+'</span>'+
-      (r!=='—'?'<span class="rank" style="'+rcol+'">★ '+r+'</span>':'')+
-      '<div class="pct-bar"><span style="width:'+barW+'%;background:'+barColor+'"></span></div>'+
-      '<span class="count">'+cnt+'</span></div>';
+      '<span class="pct">'+(locked?'--':pct+'%')+'</span>'+
+      '<div class="pct-bar"><span style="width:'+pct+'%"></span></div></div>';
   }).join('');
   g.querySelectorAll('.module-btn:not(.locked)').forEach(el=>{
     el.addEventListener('click',()=>selectMod(parseInt(el.dataset.m)));
@@ -478,9 +543,8 @@ function renderTopics(){
   let topics=ALL_TOPICS[curMod]||[];
   if(topics.length===0){bar.innerHTML=''; showPlaceholder(); return;}
   bar.innerHTML=topics.map(t=>{
-    let pct=topicPct(curMod,t.id), act=t.id===curTopic?'active':'';
-    let dotColor=pct>=80?'var(--success)':pct>0?'var(--gold)':'var(--border)';
-    return '<div class="topic-btn '+act+'" data-t="'+t.id+'">'+t.name+'<span class="pct-dot" style="background:'+dotColor+'"></span></div>';
+    let pct=topicPct(curMod,t.id), act=t.id===curTopic?'active':'', mast=pct>=80?'mastered':'';
+    return '<div class="topic-btn '+act+' '+mast+'" data-t="'+t.id+'">'+t.name+'</div>';
   }).join('');
   bar.querySelectorAll('.topic-btn').forEach(el=>{
     el.addEventListener('click',()=>selectTopic(el.dataset.t));
@@ -501,7 +565,6 @@ function selectTopic(tId){
 function showPlaceholder(){
   document.getElementById('problemText').textContent='Content coming soon!';
   document.getElementById('answerRow').style.display='none';
-  document.getElementById('progress100').style.display='none';
   document.getElementById('feedback').className='feedback';
 }
 function newProb(){
@@ -510,12 +573,10 @@ function newProb(){
   if(!topic){showPlaceholder(); return;}
   curProb=topic.gen();
   document.getElementById('answerRow').style.display='flex';
-  document.getElementById('progress100').style.display='flex';
   document.getElementById('problemText').textContent=curProb.q;
   let fb=document.getElementById('feedback'); fb.className='feedback'; fb.style.display='none';
   document.getElementById('answerInput').value=''; document.getElementById('answerInput').focus();
   let sb=document.getElementById('submitBtn'); sb.textContent='Check'; sb.className='btn btn-primary'; sb.disabled=false;
-  sb.onclick=checkAns;
   updateStats();
 }
 function checkAns(){
@@ -528,33 +589,16 @@ function checkAns(){
   if(isC){
     fb.className='feedback correct show';
     fb.innerHTML='Correct!'+(hints?'<br><em>'+hints+'</em>':'');
-    streak++; state.streak=streak; if(streak>state.bestStreak) state.bestStreak=streak;
-    let result=mark(curMod,curTopic,true);
+    streak++;
+    mark(curMod,curTopic,true);
     document.getElementById('submitBtn').textContent='Next'; document.getElementById('submitBtn').className='btn btn-success';
     document.getElementById('submitBtn').onclick=newProb;
-    if(result==='unlock') {
-      let next=curMod+1;
-      showToast('Module '+next+' Unlocked! 🎉',MODULES.find(m=>m.id===next).name);
-    }
   } else {
-    streak=0; state.streak=0;
     fb.className='feedback wrong show';
-    let result=mark(curMod,curTopic,false);
-    if(result==='death') {
-      // DEATH
-      let card=document.getElementById('problemCard');
-      card.classList.add('shake','flash-death');
-      setTimeout(()=>{card.classList.remove('shake','flash-death');},1800);
-      fb.innerHTML='<div class="death">💀 DIE! Rolling average dropped below 80%.</div>'+
-        '<div class="roll-info">Module progress has been reset. You need to maintain 80%+ on your last '+WINDOW+' answers.</div>'+
-        '<div class="solution">Answer: '+correct+'</div>';
-      showToast('💀 Module Reset!','Rolling average dipped below 80%');
-    } else {
-      fb.innerHTML='Not quite.'+(hints?'<br><em>'+hints+'</em>':'')+'<div class="solution">Answer: '+correct+'</div>';
-    }
-    save();
-    document.getElementById('submitBtn').textContent='Next'; document.getElementById('submitBtn').className='btn btn-ghost';
-    document.getElementById('submitBtn').onclick=newProb;
+    fb.innerHTML='Not quite.'+(hints?'<br><em>'+hints+'</em>':'')+'<div class="solution">Answer: '+correct+'</div>';
+    streak=0; mark(curMod,curTopic,false);
+    document.getElementById('submitBtn').textContent='Try Again'; document.getElementById('submitBtn').className='btn btn-primary';
+    document.getElementById('submitBtn').onclick=()=>{document.getElementById('answerInput').focus();document.getElementById('submitBtn').textContent='Check';document.getElementById('submitBtn').onclick=checkAns;};
   }
   updateStats(); updateScore(); renderModules();
 }
@@ -562,39 +606,27 @@ function skipProb(){
   let fb=document.getElementById('feedback'); fb.style.display='block';
   fb.className='feedback wrong show';
   fb.innerHTML='Skipped<div class="solution">Answer: '+curProb.a+'</div>';
-  streak=0; state.streak=0; mark(curMod,curTopic,false); save();
+  streak=0; mark(curMod,curTopic,false);
   document.getElementById('submitBtn').textContent='Next'; document.getElementById('submitBtn').className='btn btn-ghost';
   document.getElementById('submitBtn').onclick=newProb;
   updateStats(); updateScore(); renderModules();
 }
 function updateStats(){
-  let mod=getMod(curMod);
-  let roll=rolling(curMod);
-  let pct=modPct(curMod);
+  let m=state.mastery[curMod]||{correct:0,total:0};
   document.getElementById('streak').textContent=streak;
-  document.getElementById('rollPct').textContent=mod.total>=WINDOW?roll:'--';
-  document.getElementById('rollPct').style.color=roll<PASS?'var(--error)':'var(--success)';
-  document.getElementById('correctCount').textContent=mod.correct;
-  document.getElementById('totalCount').textContent=mod.total;
-  // Progress to 100
-  let p=document.getElementById('progressFill');
-  let l=document.getElementById('progressLabel');
-  let done=Math.min(mod.total,REQ);
-  p.style.width=(done/REQ*100)+'%';
-  p.style.background=mod.mastered?'var(--success)':'var(--primary)';
-  l.textContent=done+'/'+REQ+(mod.mastered?' ✅':'');
+  document.getElementById('correctCount').textContent=m.correct;
+  document.getElementById('totalCount').textContent=m.total;
 }
 function updateScore(){
   document.getElementById('totalScore').textContent=(state.xp||0)+' XP';
 }
-function showToast(title,sub,isDeath){
+function showToast(title,sub){
   let t=document.getElementById('toast');
-  t.className='toast'+(isDeath?' death':'');
   t.innerHTML='<div>'+title+'</div>'+(sub?'<div class="sub">'+sub+'</div>':'');
   t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),4000);
 }
 function resetAll(){
-  if(!confirm('Reset ALL progress? This cannot be undone.')) return;
+  if(!confirm('Reset ALL progress?')) return;
   state=defState(); curMod=1; curTopic=null; streak=0; save();
   renderModules(); renderTopics();
   let topics=ALL_TOPICS[1]||[];
@@ -602,10 +634,16 @@ function resetAll(){
   updateScore(); showToast('Progress Reset');
 }
 
-function toggleDark() {
-  darkMode=!darkMode;
-  applyDark();
+// Dark mode
+let darkMode = (()=>{try{return localStorage.getItem('mc2_dark')==='true';}catch(e){return false;}})();
+function applyDark() {
+  document.documentElement.classList.toggle('dark', darkMode);
+  try{localStorage.setItem('mc2_dark', darkMode);}catch(e){}
+  let knob=document.getElementById('darkKnob');
+  if(knob) knob.style.transform=darkMode?'translateX(16px)':'translateX(0)';
 }
+applyDark();
+function toggleDark(){darkMode=!darkMode;applyDark();}
 
 // Init
 function init(){
@@ -619,7 +657,6 @@ function init(){
   document.getElementById('submitBtn').addEventListener('click',checkAns);
   document.getElementById('skipBtn').addEventListener('click',skipProb);
   document.getElementById('resetBtn').addEventListener('click',resetAll);
-  document.getElementById('darkToggle').addEventListener('click',toggleDark);
   document.getElementById('answerInput').addEventListener('keydown',e=>{if(e.key==='Enter')checkAns();});
 }
 document.addEventListener('DOMContentLoaded',init);
