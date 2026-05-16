@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Math Coach 🐦</title>
+<style>
+:root {
+  --bg: #f0f4f8;
+  --card: #fff;
+  --text: #1a202c;
+  --muted: #718096;
+  --primary: #5a67d8;
+  --primary-light: #ebf4ff;
+  --success: #48bb78;
+  --success-bg: #f0fff4;
+  --error: #f56565;
+  --error-bg: #fff5f5;
+  --gold: #ecc94b;
+  --border: #e2e8f0;
+  --radius: 12px;
+  --shadow: 0 2px 8px rgba(0,0,0,.08);
+  --tap: min(48px, 12vw);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-tap-highlight-color: transparent;
+}
+.app { max-width: 800px; margin: 0 auto; padding: 12px 16px 80px; }
+header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 0 12px; flex-wrap: wrap; gap: 8px;
+}
+header h1 { font-size: 1.5rem; display: flex; align-items: center; gap: 8px; }
+.score-badge {
+  background: var(--primary); color: #fff; border-radius: 999px;
+  padding: 4px 16px; font-size: .85rem; font-weight: 600;
+}
+.module-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px; margin: 16px 0;
+}
+.module-btn {
+  background: var(--card); border: 2px solid var(--border); border-radius: var(--radius);
+  padding: 14px 10px; font-size: .85rem; cursor: pointer; text-align: center;
+  transition: all .15s; box-shadow: var(--shadow); position: relative;
+  -webkit-user-select: none; user-select: none;
+}
+.module-btn:active { transform: scale(.97); }
+.module-btn.active { border-color: var(--primary); background: var(--primary-light); }
+.module-btn.locked { opacity: .55; cursor: not-allowed; }
+.module-btn.locked:active { transform: none; }
+.module-btn.locked::after { content: '...'; position: absolute; top: 4px; right: 8px; font-size: .8rem; }
+.module-btn .num { display: block; font-size: 1.2rem; font-weight: 700; color: var(--primary); }
+.module-btn .label { display: block; margin-top: 2px; font-weight: 500; font-size: .8rem; }
+.module-btn .pct { display: block; font-size: .7rem; color: var(--muted); margin-top: 4px; }
+.module-btn .pct-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 4px; overflow: hidden; }
+.module-btn .pct-bar span { display: block; height: 100%; background: var(--success); border-radius: 2px; transition: width .3s; }
+.topic-bar {
+  display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 12px;
+  -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity;
+}
+.topic-btn {
+  flex-shrink: 0; background: var(--card); border: 1.5px solid var(--border);
+  border-radius: 999px; padding: 6px 18px; font-size: .8rem; cursor: pointer;
+  transition: all .1s; white-space: nowrap; scroll-snap-align: start;
+}
+.topic-btn.active { border-color: var(--gold); background: #fffff0; font-weight: 600; }
+.topic-btn.mastered { border-color: var(--success); }
+.topic-btn.mastered::after { content: ' ...'; color: var(--success); }
+.topic-btn:active { transform: scale(.96); }
+.problem-card {
+  background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: 24px 20px; margin: 8px 0;
+}
+.problem-text {
+  font-size: 1.6rem; text-align: center; padding: 20px 0 8px;
+  line-height: 1.4; min-height: 80px;
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: 4px;
+}
+.problem-text .expr { font-family: 'Times New Roman', Times, serif; }
+.answer-row {
+  display: flex; gap: 10px; align-items: center; justify-content: center;
+  flex-wrap: wrap; margin: 8px 0;
+}
+.answer-row input[type="text"],
+.answer-row input[type="number"] {
+  font-size: 1.3rem; padding: 10px 16px; border: 2px solid var(--border);
+  border-radius: 10px; width: min(180px, 50vw); text-align: center;
+  font-family: inherit; outline: none; transition: border-color .15s;
+  -moz-appearance: textfield;
+}
+.answer-row input:focus { border-color: var(--primary); }
+.answer-row input::-webkit-outer-spin-button,
+.answer-row input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  font-size: 1rem; font-weight: 600; padding: 10px 22px;
+  border: none; border-radius: 10px; cursor: pointer;
+  transition: all .12s; min-height: var(--tap); -webkit-user-select: none;
+}
+.btn:active { transform: scale(.96); }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-success { background: var(--success); color: #fff; }
+.btn-ghost { background: transparent; color: var(--muted); border: 1.5px solid var(--border); }
+.btn-ghost:hover { background: var(--bg); }
+.btn-sm { font-size: .8rem; padding: 6px 14px; }
+.feedback {
+  margin-top: 16px; padding: 16px; border-radius: 10px; text-align: center;
+  font-size: 1rem; display: none;
+}
+.feedback.show { display: block; }
+.feedback.correct { background: var(--success-bg); border: 1.5px solid var(--success); }
+.feedback.wrong { background: var(--error-bg); border: 1.5px solid var(--error); }
+.feedback .solution { font-weight: 700; margin-top: 4px; color: var(--primary); }
+.stats-bar {
+  display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+  padding: 8px 0; font-size: .85rem; color: var(--muted);
+}
+.stats-bar span { display: flex; align-items: center; gap: 4px; }
+.reset-area { text-align: center; margin: 24px 0; }
+.reset-area button { color: var(--error); }
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: var(--primary); color: #fff; padding: 14px 28px;
+  border-radius: var(--radius); font-weight: 600; box-shadow: 0 4px 20px rgba(0,0,0,.2);
+  z-index: 100; opacity: 0; transition: opacity .3s, transform .3s;
+  pointer-events: none; transform: translateX(-50%) translateY(20px);
+  text-align: center; max-width: 90vw;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast .sub { font-weight: 400; font-size: .85rem; margin-top: 4px; opacity: .9; }
+.module-placeholder { text-align: center; padding: 40px 20px; color: var(--muted); }
+.module-placeholder h2 { font-size: 1.3rem; margin-bottom: 8px; color: var(--text); }
+@media (max-width: 500px) {
+  .app { padding: 8px 10px 80px; }
+  header h1 { font-size: 1.2rem; }
+  .module-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .module-btn { padding: 10px 6px; font-size: .78rem; }
+  .problem-text { font-size: 1.3rem; padding: 12px 0 4px; }
+  .answer-row input { font-size: 1.1rem; width: min(140px, 50vw); }
+  .btn { font-size: .9rem; padding: 8px 16px; }
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header>
+    <h1> Math Coach</h1>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <a href="http://100.90.189.107:8083/sparrow-flash/" style="font-size:0.7rem;color:#64748b;text-decoration:none;background:#f1f5f9;padding:2px 8px;border-radius:999px;font-weight:500;">⚡ Sparrow-Flash</a>
+      <div class="score-badge" id="totalScore">0 XP</div>
+    </div>
+  </header>
+  <div class="module-grid" id="moduleGrid"></div>
+  <div class="topic-bar" id="topicBar"></div>
+  <div class="problem-card" id="problemCard">
+    <div class="problem-text" id="problemText">Pick a topic to start practicing!</div>
+    <div class="answer-row" id="answerRow">
+      <input type="text" id="answerInput" placeholder="Your answer..." autocomplete="off" inputmode="decimal">
+      <button class="btn btn-primary" id="submitBtn">Check</button>
+      <button class="btn btn-ghost btn-sm" id="skipBtn">Skip</button>
+    </div>
+    <div class="feedback" id="feedback"></div>
+    <div class="stats-bar" id="statsBar">
+      <span><span id="streak">0</span> streak</span>
+      <span><span id="correctCount">0</span>/<span id="totalCount">0</span></span>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <div class="reset-area">
+    <button class="btn btn-ghost btn-sm" id="resetBtn">Reset Progress</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  MODULES (Ch 1-8 only)
+// ============================================================
+const MODULES = [
+  { id:1, name:'Integers',                  short:'Integers',    color:'#5a67d8', ch:'Ch 1' },
+  { id:2, name:'Expressions',               short:'Expressions', color:'#ed8936', ch:'Ch 2' },
+  { id:3, name:'Basic Equations & Ineqs',   short:'Equations',   color:'#38a169', ch:'Ch 3' },
+  { id:4, name:'Number Theory',             short:'Num Theory',  color:'#d53f8c', ch:'Ch 4' },
+  { id:5, name:'Rational Numbers',          short:'Rationals',   color:'#dd6b20', ch:'Ch 5' },
+  { id:6, name:'Rational Number Operations',short:'Rat Ops',     color:'#3182ce', ch:'Ch 6' },
+  { id:7, name:'Percents',                  short:'Percents',    color:'#805ad5', ch:'Ch 7' },
+  { id:8, name:'Applying Equations & Ineqs',short:'Apply Eq',    color:'#e53e3e', ch:'Ch 8' },
+];
+
+function rint(a,b) { return Math.floor(Math.random()*(b-a+1))+a; }
+function pick(a) { return a[Math.floor(Math.random()*a.length)]; }
+function gcf(x,y) { while(y){[x,y]=[y,x%y]} return x; }
+
+function m(parts) { return parts.join(''); }
+function tex(s) { return '\\('+s+'\\)'; }
+function frac(n,d) { return '\\frac{'+n+'}{'+d+'}'; }
+
+// ============================================================
+//  TOPIC GENERATORS
+// ============================================================
+const T1 = [ // Integers
+  { id:'t1-abs', name:'Absolute Value', gen(){
+    let n=rint(-99,99); return{q:m(['|',n,'| = ?']), a:String(Math.abs(n))}; }},
+  { id:'t1-add', name:'Adding Integers', gen(){
+    let a=rint(-50,50),b=rint(-50,50); return{q:m([a,' + ',b,' = ?']), a:String(a+b)}; }},
+  { id:'t1-sub', name:'Subtracting Integers', gen(){
+    let a=rint(-50,50),b=rint(-50,50); return{q:m([a,' - ',b,' = ?']), a:String(a-b)}; }},
+  { id:'t1-mul', name:'Multiplying Integers', gen(){
+    let a=rint(-12,12),b=rint(-12,12); return{q:m([a,' x ',b,' = ?']), a:String(a*b)}; }},
+  { id:'t1-div', name:'Dividing Integers', gen(){
+    let b=pick([1,2,3,4,5,6,8,10,12]), a=b*rint(-12,12); return{q:m([a,' / ',b,' = ?']), a:String(a/b)}; }},
+  { id:'t1-exp', name:'Exponents', gen(){
+    let b=rint(-5,5), e=rint(2,5); return{q:m([b,'^',e,' = ?']), a:String(Math.pow(b,e))}; }},
+  { id:'t1-oop', name:'Order of Operations', gen(){
+    let p=pick([
+      ()=>{let a=rint(1,20),b=rint(2,9),c=rint(1,10); return{q:m([a,' + ',b,' x ',c,' = ?']),a:String(a+b*c),h:'Multiply first'};},
+      ()=>{let a=rint(1,15),b=rint(1,15),c=rint(2,8); return{q:m(['(',a,'+',b,') x ',c,' = ?']),a:String((a+b)*c),h:'Parentheses first'};},
+      ()=>{let a=rint(10,40),b=rint(2,8),c=rint(1,10); return{q:m([a,' - ',b,' x ',c,' = ?']),a:String(a-b*c),h:'Multiply first'};},
+    ]); return p(); }},
+  { id:'t1-sci', name:'Scientific Notation', gen(){
+    let p=pick([
+      ()=>{let c=rint(1,9)+'.'+rint(1,9)+'0', e=rint(1,5); return{q:m([c,' x 10^',e,' = ? (as integer)']),a:String(Math.round(parseFloat(c)*Math.pow(10,e)))};},
+      ()=>{let v=pick([1200,34000,560000,7890,45000,78000000]); return{q:m(['Write ',v,' in scientific notation']),a:v+'E'+String(v).length-1};},
+    ]); return p(); }},
+];
+
+const T2 = [ // Expressions
+  { id:'t2-distrib', name:'Distributive Property', gen(){
+    let a=rint(2,10),b=rint(1,15),c=rint(1,15); return{q:m(['Expand: ',a,'(',b,'+',c,') = ?']),a:String(a*b+a*c),h:m(['= ',a*b,' + ',a*c])}; }},
+  { id:'t2-eval', name:'Evaluate Expressions', gen(){
+    let x=rint(-5,10),a=rint(1,5),b=rint(-5,5); return{q:m(['If x = ',x,', evaluate ',a,'x ',b<0?'-':'+',' ',Math.abs(b)]),a:String(a*x+b)}; }},
+  { id:'t2-simplify', name:'Simplify Expressions', gen(){
+    let a=rint(2,6),b=rint(2,6),c=rint(1,10),d=rint(1,10); return{q:m(['Simplify: ',a,'x + ',c,' + ',b,'x - ',d,' = ?']),a:m([a+b,'x + ',c-d]),h:m(['(',a,'+',b,')x',c-d>=0?' + ':' - ',' ',Math.abs(c-d)])}; }},
+  { id:'t2-translate', name:'Translate Phrases', gen(){
+    let n=rint(1,15); return pick([
+      {q:m(['Five more than ',n,' = ?']),a:String(n+5)},
+      {q:m([n,' less than 20 = ?']),a:String(20-n)},
+      {q:m([n,' times 4 = ?']),a:String(n*4)},
+      {q:m([n,' divided by 2 = ?']),a:String(n/2)},
+    ]); }},
+  { id:'t2-props', name:'Properties', gen(){
+    let a=rint(2,9),b=rint(2,9),c=rint(2,9); return pick([
+      {q:m([a,' + ',b,' = ',b,' + ',a,' \u2014 what property?']),a:'commutative'},
+      {q:m(['(',a,'+',b,')+',c,' = ',a,'+(',b,'+',c,') \u2014 what property?']),a:'associative'},
+      {q:m([a,'(',b,'+',c,') = ',a*b,'+',a*c,' \u2014 what property?']),a:'distributive'},
+    ]); }},
+];
+
+const T3 = [ // Basic Equations & Inequalities
+  { id:'t3-addsub', name:'Add/Subtract Equations', gen(){
+    let x=rint(-20,20),b=rint(-20,20); return{q:m(['x + ',b,' = ',x+b,'. Solve for x']),a:String(x)}; }},
+  { id:'t3-muldiv', name:'Multiply/Divide Equations', gen(){
+    let x=rint(-12,12),a=pick([2,3,4,5,6]); return{q:m([a,'x = ',a*x,'. Solve for x']),a:String(x)}; }},
+  { id:'t3-twostep', name:'Two-Step Equations', gen(){
+    let x=rint(-10,10),a=pick([2,3,4,5]),b=rint(-15,15); return{q:m([a,'x + ',b,' = ',a*x+b,'. Solve for x']),a:String(x)}; }},
+  { id:'t3-ineq', name:'Inequalities', gen(){
+    let x=rint(1,10),a=pick([2,3,4]); return{q:m(['Solve: ',a,'x < ',a*x+1,' (largest integer)']),a:String(x),h:m(['x < ',(a*x+1)/a])}; }},
+];
+
+const T4 = [ // Number Theory
+  { id:'t4-prime', name:'Prime/Composite', gen(){
+    let n=pick([2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,4,6,8,9,10,12,14,15,16,18,20,21,22,24,25,26,27,28,30,32,33,34,35,36,38,39,40,42,44,45,46,48,49,50]);
+    let ip=[2,3,5,7,11,13,17,19,23,29,31,37,41,43,47].includes(n); return{q:m(['Is ',n,' prime or composite?']),a:ip?'prime':'composite'}; }},
+  { id:'t4-factor', name:'Prime Factorization', gen(){
+    let n=pick([12,18,24,30,36,40,45,48,50,54,60,72,84,90,96,100]);
+    function fz(num){let f=[],d=2; while(num>1){while(num%d===0){f.push(d);num/=d}d++}return f;}
+    return{q:m(['Prime factorization of ',n]),a:fz(n).join(' x ')}; }},
+  { id:'t4-gcf', name:'GCF', gen(){
+    let pairs=[[12,18],[24,36],[15,25],[16,24],[8,12],[30,45],[14,21],[20,28],[18,24],[10,15]];
+    let a,b;pairs[pick([...Array(pairs.length).keys()])]; // get pair
+    let pi=pick(pairs); a=pi[0];b=pi[1]; return{q:m(['GCF of ',a,' and ',b]),a:String(gcf(a,b))}; }},
+  { id:'t4-lcm', name:'LCM', gen(){
+    let pairs=[[3,4],[6,8],[4,5],[6,10],[9,12],[5,7],[8,12],[6,9],[10,15]];
+    let pi=pick(pairs), a=pi[0],b=pi[1]; return{q:m(['LCM of ',a,' and ',b]),a:String(a*b/gcf(a,b))}; }},
+  { id:'t4-arith', name:'Arithmetic Sequences', gen(){
+    let a1=rint(1,10),d=pick([2,3,5,-2,-3]),n=pick([3,4,5,6]);
+    let t=[]; for(let i=0;i<n;i++) t.push(a1+i*d);
+    let qn=pick([1,2,3,4,5,6]); let v=a1+(qn-1)*d;
+    return{q:m(['Sequence: ',t.join(', '),',... What is term ',qn,'?']),a:String(v)}; }},
+  { id:'t4-geom', name:'Geometric Sequences', gen(){
+    let a1=rint(1,5),r=pick([2,3]); let t=[],v=a1; for(let i=0;i<4;i++){t.push(v);v*=r}
+    return{q:m(['Sequence: ',t.join(', '),',... Next term?']),a:String(t[3]*r)}; }},
+  { id:'t4-bases', name:'Bases', gen(){
+    return pick([
+      {q:'Convert binary 1011 to decimal',a:'11'},
+      {q:'Convert binary 1101 to decimal',a:'13'},
+      {q:'Convert binary 10010 to decimal',a:'18'},
+      {q:'Convert decimal 7 to binary',a:'111'},
+      {q:'Convert decimal 12 to binary',a:'1100'},
+      {q:'Convert decimal 15 to binary',a:'1111'},
+      {q:'Convert binary 1010 to decimal',a:'10'},
+      {q:'Convert binary 1111 to decimal',a:'15'},
+    ]); }},
+];
+
+const T5 = [ // Rational Numbers
+  { id:'t5-forms', name:'Forms of Rational Numbers', gen(){
+    return pick([
+      {q:'Write 0.75 as fraction',a:'3/4'},
+      {q:'Write 0.5 as fraction',a:'1/2'},
+      {q:'Write 0.2 as fraction',a:'1/5'},
+      {q:'Write 0.125 as fraction',a:'1/8'},
+      {q:'Write 0.375 as fraction',a:'3/8'},
+      {q:'Write 3/5 as decimal',a:'0.6'},
+      {q:'Write 7/8 as decimal',a:'0.875'},
+      {q:'Write 4/5 as decimal',a:'0.8'},
+    ]); }},
+  { id:'t5-compare', name:'Comparing Rationals', gen(){
+    return pick([
+      {q:'Which is larger: 3/5 or 1/2?',a:'3/5'},
+      {q:'Which is larger: 7/8 or 3/4?',a:'7/8'},
+      {q:'Which is larger: 2/5 or 2/5?',a:'equal'},
+      {q:'Which is larger: 1/3 or 1/4?',a:'1/3'},
+      {q:'Which is larger: 5/6 or 11/12?',a:'11/12'},
+      {q:'Which is larger: 2/3 or 3/5?',a:'2/3'},
+    ]); }},
+  { id:'t5-decimal', name:'Decimal Equivalents', gen(){
+    return pick([
+      {q:'1/8 as decimal',a:'0.125'},
+      {q:'7/10 as decimal',a:'0.7'},
+      {q:'3/5 as decimal',a:'0.6'},
+      {q:'9/100 as decimal',a:'0.09'},
+      {q:'45/100 as decimal',a:'0.45'},
+      {q:'3/4 as decimal',a:'0.75'},
+      {q:'1/3 as decimal (round to 3 places)',a:'0.333'},
+    ]); }},
+  { id:'t5-ratio', name:'Ratio and Rate', gen(){
+    let a=rint(2,8),b=rint(3,9),m=rint(2,5);
+    return{q:m(['Recipe: ',a,' cups for ',b,' servings. Cups for ',b*m,' servings?']),a:String(a*m)}; }},
+  { id:'t5-proportion', name:'Proportions', gen(){
+    let p=pick([
+      ()=>{let a=rint(1,6),b=rint(2,8),x=rint(1,6); return{q:m([a,'/',b,' = ',x,'/?']),a:String(b*x/a)};},
+      ()=>{let a=rint(2,8),b=rint(1,5),x=rint(2,8); return{q:m([a,'/',x,' = ',b,'/10']),a:String(a*10/b)};},
+    ]); return p(); }},
+  { id:'t5-reals', name:'Real Numbers', gen(){
+    return pick([
+      {q:'Is sqrt(25) rational? (yes/no)',a:'yes'},
+      {q:'Is sqrt(7) rational? (yes/no)',a:'no'},
+      {q:'Is 0.333... rational? (yes/no)',a:'yes'},
+      {q:'Is pi rational? (yes/no)',a:'no'},
+      {q:'Is -3 a real number? (yes/no)',a:'yes'},
+      {q:'Is sqrt(2) rational? (yes/no)',a:'no'},
+    ]); }},
+];
+
+const T6 = [ // Rational Number Operations
+  { id:'t6-add', name:'Add/Subtract Fractions', gen(){
+    let d=pick([2,3,4,5,6,8,10,12]),a=rint(1,d-1),b=rint(1,d-1),op=pick(['+','-']);
+    let num=op==='+'?a+b:Math.abs(a-b);
+    if(num===0) return{q:m(['',a,'/',d,' - ',b,'/',d,' = ?']),a:'0'};
+    let gd=gcf(num,d),sn=num/gd,sd=d/gd,ans=sd===1?String(sn):sn+'/'+sd;
+    let sym=op==='+'?' + ':' - '; return{q:m(['',a,'/',d,sym,b,'/',d,' = ?']),a:ans}; }},
+  { id:'t6-mul', name:'Multiply Fractions', gen(){
+    let a=rint(1,5),b=rint(1,6),c=rint(1,5),d=rint(1,6),num=a*c,den=b*d,gd=gcf(num,den);
+    let ans=den/gd===1?String(num/gd):(num/gd)+'/'+(den/gd);
+    return{q:m(['',a,'/',b,' x ',c,'/',d,' = ?']),a:ans}; }},
+  { id:'t6-div', name:'Divide Fractions', gen(){
+    let a=rint(1,5),b=rint(1,6),c=rint(1,5),d=rint(1,6),num=a*d,den=b*c,gd=gcf(num,den);
+    let ans=den/gd===1?String(num/gd):(num/gd)+'/'+(den/gd);
+    return{q:m(['',a,'/',b,' / ',c,'/',d,' = ?']),a:ans,h:'Multiply by the reciprocal'}; }},
+  { id:'t6-eval', name:'Evaluate Rational Expressions', gen(){
+    let x=pick([2,3,4,5,6,10]); let a=pick([1,2,3]);
+    let num=2*a, den=x, gd=gcf(num,den);
+    let ans=den/gd===1?String(num/gd):(num/gd)+'/'+(den/gd);
+    return{q:m(['If x=',x,', evaluate ',a,'/',x,' + ',a,'/',x,' = ?']),a:ans}; }},
+  { id:'t6-solve', name:'Solve Rational Equations', gen(){
+    let x=pick([2,3,4,6]),a=pick([2,3,4]); return{q:m(['Solve: x/',a,' = ',x]),a:String(a*x)}; }},
+  { id:'t6-sci', name:'Scientific Notation Ops', gen(){
+    return pick([
+      {q:'(2x10^3)(3x10^4) = ?x10^?',a:'6x10^7'},
+      {q:'(4x10^5)(2x10^2) = ?x10^?',a:'8x10^7'},
+      {q:'(6x10^8)/(2x10^3) = ?x10^?',a:'3x10^5'},
+      {q:'(8x10^6)/(4x10^2) = ?x10^?',a:'2x10^4'},
+    ]); }},
+];
+
+const T7 = [ // Percents
+  { id:'t7-forms', name:'Forms of Percents', gen(){
+    return pick([
+      {q:'0.75 as a percent',a:'75%'},
+      {q:'0.08 as a percent',a:'8%'},
+      {q:'1.25 as a percent',a:'125%'},
+      {q:'78% as a decimal',a:'0.78'},
+      {q:'5% as a decimal',a:'0.05'},
+      {q:'150% as a decimal',a:'1.5'},
+      {q:'2/5 as a percent',a:'40%'},
+      {q:'3/4 as a percent',a:'75%'},
+      {q:'1/8 as a percent',a:'12.5%'},
+      {q:'7/10 as a percent',a:'70%'},
+    ]); }},
+  { id:'t7-equations', name:'Percent Equations', gen(){
+    return pick([
+      {q:'What percent of 50 is 10?',a:'20%'},
+      {q:'What percent of 80 is 20?',a:'25%'},
+      {q:'What percent of 200 is 50?',a:'25%'},
+      {q:'30% of what number is 15?',a:'50'},
+      {q:'25% of what number is 10?',a:'40'},
+      {q:'75% of what number is 15?',a:'20'},
+      {q:'What is 40% of 60?',a:'24'},
+    ]); }},
+  { id:'t7-of', name:'Percent of a Number', gen(){
+    let p=pick([10,20,25,30,50,75,15,40,60]); let n=pick([40,60,80,100,120,200,50,300,150]);
+    return{q:m(['What is ',p,'% of ',n,'?']),a:String(Math.round(n*p/100))}; }},
+  { id:'t7-discount', name:'Discount & Markup', gen(){
+    let pr=pick([20,50,80,100,120,200,40,60]),pct=pick([10,15,20,25,30,50]);
+    let mode=pick(['discount','markup']), mult=mode==='discount'?(100-pct)/100:(100+pct)/100;
+    return{q:m([mode==='discount'?'Discount':'Markup',' of ',pct,'% on $',pr,' = ?']),a:String(Math.round(pr*mult))}; }},
+  { id:'t7-tip', name:'Commissions & Tips', gen(){
+    let b=pick([25,40,60,80,100,150]),p=pick([10,15,18,20]);
+    return{q:m([p,'% tip on $',b,' bill']),a:String(Math.round(b*p/100))}; }},
+  { id:'t7-interest', name:'Simple Interest', gen(){
+    let p=pick([100,200,500,1000,2000]),r=pick([2,3,4,5,6]),t=pick([1,2,3]);
+    return{q:m(['Interest on $',p,' at ',r,'% for ',t,' yr(s)']),a:String(p*r*t/100)}; }},
+  { id:'t7-change', name:'Percent Change', gen(){
+    return pick([
+      {q:'From 20 to 25: % increase?',a:'25%'},
+      {q:'From 50 to 40: % decrease?',a:'20%'},
+      {q:'From 80 to 100: % increase?',a:'25%'},
+      {q:'From 30 to 24: % decrease?',a:'20%'},
+      {q:'From 10 to 15: % increase?',a:'50%'},
+      {q:'From 60 to 45: % decrease?',a:'25%'},
+    ]); }},
+];
+
+const T8 = [ // Applying Equations & Inequalities
+  { id:'t8-simplify', name:'Simplifying Equations', gen(){
+    let x=rint(1,8),a=rint(2,5),b=rint(1,10),c=rint(1,8);
+    return{q:m(['Solve: ',a,'x + ',b,' + ',c,'x = ',a*x+b+c*x]),a:String(x)}; }},
+  { id:'t8-varboth', name:'Variables Both Sides', gen(){
+    let a=rint(2,4),c=rint(1,4); if(a===c){c=Math.max(1,a-1);}
+    let x=rint(1,6),b=rint(1,8),d=a*x+b-c*x;
+    if(d<1||d>20){d=b+1;b=d-a*x+c*x;if(b<1)b=1;d=a*x+b-c*x;}
+    return{q:m(['Solve: ',a,'x + ',b,' = ',c,'x + ',d]),a:String(x)}; }},
+  { id:'t8-apply-eq', name:'Applying Equations', gen(){
+    let p=pick([
+      ()=>{let a=rint(2,5),x=rint(2,6); return{q:m([a,' books cost $',a*x,'. Each costs?']),a:String(x)};},
+      ()=>{let pr=pick([10,12,15,20,25]),h=rint(2,8); return{q:m(['Paid $',pr*h,' for ',h,'h. Hourly rate?']),a:String(pr)};},
+      ()=>{let s=rint(10,50),a=pick([2,3,5,10]),d=rint(3,7); return{q:m(['Start $',s,', save $',a,'/day. Total after ',d,' days?']),a:String(s+a*d)};},
+    ]); return p(); }},
+  { id:'t8-solve-ineq', name:'Solving Inequalities', gen(){
+    let x=rint(2,8),a=pick([2,3,4]),rhs=a*x,p=pick(['<','>']);
+    let val=p==='<'?x:x+1;
+    return{q:m(['Solve: ',a,'x ',p,' ',p==='<'?a*x+1:a*x-1,' (largest integer)']),a:String(val),h:m(['Divide both sides by ',a])}; }},
+  { id:'t8-apply-ineq', name:'Applying Inequalities', gen(){
+    return pick([
+      {q:'Need $50. Have $20, earn $10/h. Min hours?',a:'3',h:'20+10h >= 50'},
+      {q:'Drive <= 300 mi at 60 mph. Max hours?',a:'5',h:'60h <= 300'},
+      {q:'50 cupcakes, pack 8/box. Min boxes?',a:'7',h:'8b >= 50'},
+      {q:'Budget $100. Spent $15, need $5/plant. Max plants?',a:'17',h:'15+5p <= 100'},
+      {q:'Earn $8/h, want >= $100. Hours?',a:'13',h:'8h >= 100'},
+      {q:'Room holds 40, 12 already here. 3/car. Max cars?',a:'9',h:'12+3c <= 40'},
+    ]); }},
+];
+
+const ALL_TOPICS = {1:T1,2:T2,3:T3,4:T4,5:T5,6:T6,7:T7,8:T8};
+
+// ============================================================
+//  STATE & PERSISTENCE
+// ============================================================
+const KEY = 'mc_progress';
+function defState(){return{xp:0,mastery:{},unlocked:[1],lastMod:1,lastTopic:null};}
+let state = (()=>{try{let r=localStorage.getItem(KEY);return r?JSON.parse(r):defState();}catch(e){return defState();}})();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+
+function modPct(mId){
+  let m=state.mastery[mId]; if(!m||!m.total) return 0;
+  return Math.round((m.correct/m.total)*100);
+}
+function topicPct(mId,tId){
+  let m=state.mastery[mId]; if(!m||!m.topics||!m.topics[tId]) return 0;
+  let t=m.topics[tId]; return t.total?Math.round((t.correct/t.total)*100):0;
+}
+function mark(mId,tId,correct){
+  if(!state.mastery[mId]) state.mastery[mId]={correct:0,total:0,topics:{}};
+  let m=state.mastery[mId];
+  if(!m.topics[tId]) m.topics[tId]={correct:0,total:0};
+  let t=m.topics[tId];
+  m.total++; t.total++;
+  if(correct){m.correct++; t.correct++; state.xp=(state.xp||0)+10;
+    // Check module unlock
+    let topics=ALL_TOPICS[mId];
+    if(topics&&topics.every(tx=>topicPct(mId,tx.id)>=80)){
+      let next=mId+1;
+      if(next<=8&&!state.unlocked.includes(next)){
+        state.unlocked.push(next); state.unlocked.sort((a,b)=>a-b);
+        showToast('Module '+next+' Unlocked!',MODULES.find(mx=>mx.id===next).name);
+  }}}
+  save();
+}
+
+// ============================================================
+//  UI
+// ============================================================
+let curMod=state.lastMod||1, curTopic=null, curProb=null, streak=0;
+
+function renderModules(){
+  let g=document.getElementById('moduleGrid');
+  g.innerHTML=MODULES.map(m=>{
+    let pct=modPct(m.id), locked=!state.unlocked.includes(m.id), act=m.id===curMod?'active':'';
+    return '<div class="module-btn '+(locked?'locked':'')+' '+act+'" data-m="'+m.id+'">'+
+      '<span class="num">'+m.id+'</span>'+
+      '<span class="label">'+m.short+'</span>'+
+      '<span class="pct">'+(locked?'--':pct+'%')+'</span>'+
+      '<div class="pct-bar"><span style="width:'+pct+'%"></span></div></div>';
+  }).join('');
+  g.querySelectorAll('.module-btn:not(.locked)').forEach(el=>{
+    el.addEventListener('click',()=>selectMod(parseInt(el.dataset.m)));
+  });
+}
+function renderTopics(){
+  let bar=document.getElementById('topicBar');
+  let topics=ALL_TOPICS[curMod]||[];
+  if(topics.length===0){bar.innerHTML=''; showPlaceholder(); return;}
+  bar.innerHTML=topics.map(t=>{
+    let pct=topicPct(curMod,t.id), act=t.id===curTopic?'active':'', mast=pct>=80?'mastered':'';
+    return '<div class="topic-btn '+act+' '+mast+'" data-t="'+t.id+'">'+t.name+'</div>';
+  }).join('');
+  bar.querySelectorAll('.topic-btn').forEach(el=>{
+    el.addEventListener('click',()=>selectTopic(el.dataset.t));
+  });
+}
+function selectMod(mId){
+  if(!state.unlocked.includes(mId)) return;
+  curMod=mId; state.lastMod=mId; save();
+  renderModules(); renderTopics();
+  let topics=ALL_TOPICS[mId]||[];
+  if(topics.length){selectTopic(topics[0].id);}
+  else showPlaceholder();
+}
+function selectTopic(tId){
+  curTopic=tId; state.lastTopic=tId; save();
+  renderTopics(); newProb();
+}
+function showPlaceholder(){
+  document.getElementById('problemText').textContent='Content coming soon!';
+  document.getElementById('answerRow').style.display='none';
+  document.getElementById('feedback').className='feedback';
+}
+function newProb(){
+  let topics=ALL_TOPICS[curMod]||[];
+  let topic=topics.find(t=>t.id===curTopic);
+  if(!topic){showPlaceholder(); return;}
+  curProb=topic.gen();
+  document.getElementById('answerRow').style.display='flex';
+  document.getElementById('problemText').textContent=curProb.q;
+  let fb=document.getElementById('feedback'); fb.className='feedback'; fb.style.display='none';
+  document.getElementById('answerInput').value=''; document.getElementById('answerInput').focus();
+  let sb=document.getElementById('submitBtn'); sb.textContent='Check'; sb.className='btn btn-primary'; sb.disabled=false;
+  updateStats();
+}
+function checkAns(){
+  let inp=document.getElementById('answerInput').value.trim();
+  if(!inp) return;
+  let fb=document.getElementById('feedback'), correct=curProb.a, hints=curProb.h;
+  let clean=s=>s.toLowerCase().replace(/\s+/g,'').replace(/[,x×·\*]/g,'').replace(/^0+/,'');
+  let isC=clean(inp)===clean(correct)||clean(inp).replace(/e/g,'E')===clean(correct).replace(/e/g,'E');
+  fb.style.display='block';
+  if(isC){
+    fb.className='feedback correct show';
+    fb.innerHTML='Correct!'+(hints?'<br><em>'+hints+'</em>':'');
+    streak++;
+    mark(curMod,curTopic,true);
+    document.getElementById('submitBtn').textContent='Next'; document.getElementById('submitBtn').className='btn btn-success';
+    document.getElementById('submitBtn').onclick=newProb;
+  } else {
+    fb.className='feedback wrong show';
+    fb.innerHTML='Not quite.'+(hints?'<br><em>'+hints+'</em>':'')+'<div class="solution">Answer: '+correct+'</div>';
+    streak=0; mark(curMod,curTopic,false);
+    document.getElementById('submitBtn').textContent='Try Again'; document.getElementById('submitBtn').className='btn btn-primary';
+    document.getElementById('submitBtn').onclick=()=>{document.getElementById('answerInput').focus();document.getElementById('submitBtn').textContent='Check';document.getElementById('submitBtn').onclick=checkAns;};
+  }
+  updateStats(); updateScore(); renderModules();
+}
+function skipProb(){
+  let fb=document.getElementById('feedback'); fb.style.display='block';
+  fb.className='feedback wrong show';
+  fb.innerHTML='Skipped<div class="solution">Answer: '+curProb.a+'</div>';
+  streak=0; mark(curMod,curTopic,false);
+  document.getElementById('submitBtn').textContent='Next'; document.getElementById('submitBtn').className='btn btn-ghost';
+  document.getElementById('submitBtn').onclick=newProb;
+  updateStats(); updateScore(); renderModules();
+}
+function updateStats(){
+  let m=state.mastery[curMod]||{correct:0,total:0};
+  document.getElementById('streak').textContent=streak;
+  document.getElementById('correctCount').textContent=m.correct;
+  document.getElementById('totalCount').textContent=m.total;
+}
+function updateScore(){
+  document.getElementById('totalScore').textContent=(state.xp||0)+' XP';
+}
+function showToast(title,sub){
+  let t=document.getElementById('toast');
+  t.innerHTML='<div>'+title+'</div>'+(sub?'<div class="sub">'+sub+'</div>':'');
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),4000);
+}
+function resetAll(){
+  if(!confirm('Reset ALL progress?')) return;
+  state=defState(); curMod=1; curTopic=null; streak=0; save();
+  renderModules(); renderTopics();
+  let topics=ALL_TOPICS[1]||[];
+  if(topics.length) selectTopic(topics[0].id);
+  updateScore(); showToast('Progress Reset');
+}
+
+// Init
+function init(){
+  renderModules();
+  let topics=ALL_TOPICS[curMod]||[];
+  if(topics.length){
+    if(state.lastTopic&&topics.some(t=>t.id===state.lastTopic)) selectTopic(state.lastTopic);
+    else selectTopic(topics[0].id);
+  } else showPlaceholder();
+  updateScore();
+  document.getElementById('submitBtn').addEventListener('click',checkAns);
+  document.getElementById('skipBtn').addEventListener('click',skipProb);
+  document.getElementById('resetBtn').addEventListener('click',resetAll);
+  document.getElementById('answerInput').addEventListener('keydown',e=>{if(e.key==='Enter')checkAns();});
+}
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
