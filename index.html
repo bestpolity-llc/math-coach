@@ -102,8 +102,8 @@ header h1 { font-size: 1.5rem; display: flex; align-items: center; gap: 8px; }
 .module-btn .label { display: block; margin-top: 2px; font-weight: 500; font-size: .8rem; }
 .module-btn .pct { display: block; font-size: .7rem; color: var(--muted); margin-top: 4px; }
 .module-btn .rank { font-size: .7rem; font-weight: 700; margin-top: 2px; }
-.module-btn .pct-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 4px; overflow: hidden; }
-.module-btn .pct-bar span { display: block; height: 100%; background: var(--success); border-radius: 2px; transition: width .3s; }
+.module-btn .pct-bar { height: 6px; background: var(--border); border-radius: 3px; margin-top: 4px; overflow: hidden; }
+.module-btn .pct-bar span { display: block; height: 100%; border-radius: 3px; transition: width .3s, background .3s; }
 .module-btn .count { font-size: .65rem; color: var(--muted); margin-top: 2px; }
 .topic-bar {
   display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 12px;
@@ -457,13 +457,16 @@ function renderModules(){
     let locked=!state.unlocked.includes(m.id), act=m.id===curMod?'active':'';
     let r=rankStr(pct,mod.mastered);
     let rcol=r!=='—'?'color:'+rankColor(r):'';
+    let pctDone=Math.min(mod.total,REQ);
+    let barW=(pctDone/REQ*100);
+    let barColor=mod.mastered?'var(--success)':roll>=80?'var(--primary)':roll>0?'var(--gold)':'var(--border)';
     let cnt=mod.total+'/'+REQ;
     return '<div class="module-btn '+(locked?'locked':'')+' '+act+'" data-m="'+m.id+'">'+
       '<span class="num">'+m.id+'</span>'+
       '<span class="label">'+m.short+'</span>'+
-      '<span class="pct">'+(locked?'--':pct+'%')+'</span>'+
+      '<span class="pct">'+(locked?'--':roll+'%')+'</span>'+
       (r!=='—'?'<span class="rank" style="'+rcol+'">★ '+r+'</span>':'')+
-      '<div class="pct-bar"><span style="width:'+pct+'%"></span></div>'+
+      '<div class="pct-bar"><span style="width:'+barW+'%;background:'+barColor+'"></span></div>'+
       '<span class="count">'+cnt+'</span></div>';
   }).join('');
   g.querySelectorAll('.module-btn:not(.locked)').forEach(el=>{
